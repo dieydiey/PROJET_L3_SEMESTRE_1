@@ -4,6 +4,7 @@ import sn.ism.brasilburger.entity.Burger;
 import sn.ism.brasilburger.services.interfaces.IBurgerService;
 import sn.ism.brasilburger.utils.ConsoleHelper;
 import sn.ism.brasilburger.exceptions.*;
+import java.util.List;
 
 public class BurgerView {
     private final IBurgerService burgerService;
@@ -23,10 +24,11 @@ public class BurgerView {
 
                 switch (choix) {
                     case 1:
-                       // listerBurgers();
+                        ajouterBurger();
+                       
                         break;
                     case 2:
-                        ajouterBurger();
+                        listerBurgers();
                         break;
                     case 3:
                        // modifierBurger();
@@ -52,8 +54,8 @@ public class BurgerView {
         System.out.println("╔═══════════════════════════════════════════════════════╗");
         System.out.println("║          🍔 GESTION DES BURGERS                      ║");
         System.out.println("╠═══════════════════════════════════════════════════════╣");
-        System.out.println("║  1. Lister tous les burgers                          ║");
-        System.out.println("║  2. Ajouter un burger                                 ║");
+        System.out.println("║  1. Ajouter un burger                          ║");
+        System.out.println("║  2. Lister tous les burgers                           ║");
         System.out.println("║  3. Modifier un burger                                ║");
         System.out.println("║  4. Archiver/Restaurer un burger                      ║");
         System.out.println("║  5. Rechercher un burger                              ║");
@@ -89,6 +91,41 @@ public class BurgerView {
 
         ConsoleHelper.pause();
     }
+
+    private void listerBurgers() {
+        ConsoleHelper.afficherTitre("LISTE DES BURGERS");
+
+        List<Burger> burgers = burgerService.listerTousBurgers();
+
+        if (burgers.isEmpty()) {
+            ConsoleHelper.afficherInfo("Aucun burger trouvé");
+        } else {
+            System.out.println("\n┌─────┬──────────────────────────┬─────────────┬──────────┐");
+            System.out.println("│ ID  │ Nom                      │ Prix (FCFA) │ Statut   │");
+            System.out.println("├─────┼──────────────────────────┼─────────────┼──────────┤");
+
+            for (Burger burger : burgers) {
+                String statut = burger.isArchive() ? "Archivé" : "Actif";
+                System.out.printf("│ %-3d │ %-24s │ %,11.0f │ %-8s │%n",
+                    burger.getId(),
+                    tronquer(burger.getNom(), 24),
+                    burger.getPrix(),
+                    statut
+                );
+            }
+
+            System.out.println("└─────┴──────────────────────────┴─────────────┴──────────┘");
+            System.out.printf("\nTotal: %d burger(s)\n", burgers.size());
+        }
+    }
+
+     private String tronquer(String texte, int longueur) {
+        if (texte.length() <= longueur) {
+            return texte;
+        }
+        return texte.substring(0, longueur - 3) + "...";
+    }
+
 
 
 }

@@ -51,4 +51,10 @@ public class BurgerServiceImpl implements IBurgerService {
     public boolean existeNom(String nom) {
         return burgerRepository.findByNom(nom).isPresent();
     }
+
+     @Override
+    public List<Burger> listerTousBurgers() {
+        return burgerRepository.findAll();
+    }
+
 }
