@@ -39,7 +39,7 @@ public class ComplementView {
                         archiverComplement();
                         break;
                     case 5:
-                        //filtrerParType();
+                        restaurerComplement();
                         break;
                     case 0:
                         retour = true;
@@ -222,6 +222,32 @@ public class ComplementView {
                 complement.getImage()
             )) {
                 ConsoleHelper.afficherSucces("Complément " + action + " avec succès !");
+            }
+        } catch (ValidationException e) {
+            ConsoleHelper.afficherErreur("Validation: " + e.getMessage());
+        }
+
+        ConsoleHelper.pause();
+    }
+
+    private void restaurerComplement() {
+        ConsoleHelper.afficherTitre("RESTAURER UN COMPLÉMENT");
+
+        Complement complement = null;
+
+        while (complement == null) {
+            int id = ConsoleHelper.lireEntier("ID du complément à restaurer");
+
+            try {
+                complement = complementService.obtenirComplement(id);
+            } catch (EntityNotFoundException e) {
+                ConsoleHelper.afficherErreur(e.getMessage());
+            }
+        }
+
+        try {
+            if (complementService.restaurerComplement(complement.getId())) {
+                ConsoleHelper.afficherSucces("Complément restauré avec succès !");
             }
         } catch (ValidationException e) {
             ConsoleHelper.afficherErreur("Validation: " + e.getMessage());
