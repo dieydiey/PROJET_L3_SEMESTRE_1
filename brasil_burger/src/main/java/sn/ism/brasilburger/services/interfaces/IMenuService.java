@@ -12,4 +12,6 @@ public interface IMenuService {
     public Menu obtenirMenu(int id);
     public double calculerPrixMenu(int idMenu);
     boolean modifierMenu(int id, String nom, String image);
+    boolean archiverMenu(int id);
+    boolean restaurerMenu(int id);
 }

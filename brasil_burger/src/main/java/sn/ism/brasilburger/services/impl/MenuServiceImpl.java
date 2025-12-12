@@ -57,7 +57,7 @@ public class MenuServiceImpl implements IMenuService{
 
     @Override
     public double calculerPrixMenu(int idMenu) {
-        obtenirMenu(idMenu); // Vérifie l'existence
+        obtenirMenu(idMenu); 
         return menuRepository.calculatePrixTotal(idMenu);
     }
 
@@ -104,6 +104,20 @@ public class MenuServiceImpl implements IMenuService{
         menu.setImage(image);
         return menuRepository.update(menu);
     }
+
+    @Override
+    public boolean archiverMenu(int id) {
+        Menu menu = obtenirMenu(id);
+        menu.setArchive(true);
+        return menuRepository.update(menu);
+    }
+    @Override
+    public boolean restaurerMenu(int id) {
+        Menu menu = obtenirMenu(id);
+        menu.setArchive(false);
+        return menuRepository.update(menu); 
+    }
+
 
     
 }
