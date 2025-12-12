@@ -5,4 +5,5 @@ import java.util.List;
 
 public interface ILivreurService {
     public boolean creerLivreur(String nom, String prenom, String telephone);
+    public List<Livreur> listerTousLivreurs();
 }

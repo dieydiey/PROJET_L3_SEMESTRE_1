@@ -87,5 +87,10 @@ public class LivreurServiceImpl implements ILivreurService {
         int nouveauNumero = max + 1;
         return String.format("LIV%03d", nouveauNumero);
     }
+
+    @Override
+    public List<Livreur> listerTousLivreurs() {
+        return livreurRepository.findAll();
+    }
     
 }

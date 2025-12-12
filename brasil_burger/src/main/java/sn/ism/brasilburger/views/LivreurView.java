@@ -28,7 +28,7 @@ public class LivreurView {
                         ajouterLivreur();
                         break;
                     case 2:
-                        //listerLivreurs();
+                        listerLivreurs();
                         break;
                     case 0:
                         retour = true;
@@ -66,6 +66,27 @@ public class LivreurView {
             ConsoleHelper.afficherSucces("Livreur ajouté avec succès !");
         } else {
             ConsoleHelper.afficherErreur("Échec de l'ajout du livreur.");
+        }
+        ConsoleHelper.pause();
+    }
+
+    private void listerLivreurs() {
+        ConsoleHelper.afficherTitre("LISTE DES LIVREURS");
+
+        List<Livreur> livreurs = livreurService.listerTousLivreurs();
+        if (livreurs.isEmpty()) {
+            ConsoleHelper.afficherInfo("Aucun livreur disponible.");
+        } else {
+            System.out.printf("%-5s %-15s %-15s %-15s %-10s%n", "ID", "Nom", "Prénom", "Téléphone", "Disponible");
+            System.out.println("--------------------------------------------------------------");
+            for (Livreur livreur : livreurs) {
+                System.out.printf("%-5d %-15s %-15s %-15s %-10s%n",
+                        livreur.getId(),
+                        livreur.getNom(),
+                        livreur.getPrenom(),
+                        livreur.getTelephone(),
+                        livreur.isDisponible() ? "Oui" : "Non");
+            }
         }
         ConsoleHelper.pause();
     }
