@@ -25,10 +25,10 @@ public class ZoneView {
 
                 switch (choix) {
                     case 1:
-                        ajouterZones();
+                        ajouterZone();
                         break;
                     case 2:
-                        //listerZone();
+                        listerZones();
                         break;
                     case 0:
                         retour = true;
@@ -53,7 +53,7 @@ public class ZoneView {
         System.out.println("║  0. Retour au menu principal                          ║");
         System.out.println("╚═══════════════════════════════════════════════════════╝");
     }
-    private void ajouterZones() {
+    private void ajouterZone() {
         ConsoleHelper.afficherTitre("AJOUTER UNE ZONE");
 
         try {
@@ -77,5 +77,38 @@ public class ZoneView {
         }
 
         ConsoleHelper.pause();
+    }
+
+    private void listerZones() {
+        ConsoleHelper.afficherTitre("LISTE DES ZONES DE LIVRAISON");
+
+        List<Zone> zones = zoneService.listerToutesZones();
+
+        if (zones.isEmpty()) {
+            ConsoleHelper.afficherInfo("Aucune zone trouvée");
+        } else {
+            System.out.println("\n┌─────┬──────────────────┬───────────────────────────────┬──────────────┐");
+            System.out.println("│ ID  │ Nom              │ Quartiers                     │ Prix (FCFA)  │");
+            System.out.println("├─────┼──────────────────┼───────────────────────────────┼──────────────┤");
+
+            for (Zone zone : zones) {
+                System.out.printf("│ %-3d │ %-16s │ %-29s │ %,12.0f │%n",
+                    zone.getId(),
+                    tronquer(zone.getNom(), 16),
+                    tronquer(zone.getQuartiers(), 29),
+                    zone.getPrixLivraison()
+                );
+            }
+
+            System.out.println("└─────┴──────────────────┴───────────────────────────────┴──────────────┘");
+            System.out.printf("\nTotal: %d zone(s)\n", zones.size());
+        }
+
+        ConsoleHelper.pause();
+    }
+
+    private String tronquer(String texte, int longueur) {
+        if (texte.length() <= longueur) return texte;
+        return texte.substring(0, longueur - 3) + "...";
     }
 }

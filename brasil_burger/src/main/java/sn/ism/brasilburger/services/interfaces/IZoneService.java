@@ -6,5 +6,6 @@ import java.util.List;
 public interface IZoneService {
     boolean creerZone(String nom, String quartiers, double prixLivraison);
     public boolean existeNom(String nom);
+    public List<Zone> listerToutesZones();
 
 }
