@@ -216,6 +216,46 @@ public class MenuRepositoryImpl implements IMenuRepository {
         }
     }
 
+    @Override
+    public Optional<Menu> findByNom(String nom) {
+        String sql = "SELECT * FROM menu WHERE nom = ?";
+        
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, nom);
+            ResultSet rs = stmt.executeQuery();
+            
+            if (rs.next()) {
+                Menu menu = mapResultSetToMenu(rs);
+                menu.setCompositions(findCompositionsByMenuId(menu.getId()));
+                menu.setPrixTotal(calculatePrixTotal(menu.getId()));
+                return Optional.of(menu);
+            }
+        } catch (SQLException e) {
+            throw new DatabaseException("Erreur lors de la recherche du menu par nom: " + e.getMessage());
+        }
+        return Optional.empty();
+    }
+
+    @Override
+    public List<Menu> findActifs() {
+        List<Menu> menus = new ArrayList<>();
+        String sql = "SELECT * FROM menu WHERE archive = false ORDER BY date_creation DESC";
+        
+        try (Statement stmt = connection.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+            
+            while (rs.next()) {
+                Menu menu = mapResultSetToMenu(rs);
+                menu.setCompositions(findCompositionsByMenuId(menu.getId()));
+                menu.setPrixTotal(calculatePrixTotal(menu.getId()));
+                menus.add(menu);
+            }
+        } catch (SQLException e) {
+            throw new DatabaseException("Erreur lors de la récupération des menus actifs: " + e.getMessage());
+        }
+        return menus;
+    }
+
     private Menu mapResultSetToMenu(ResultSet rs) throws SQLException {
         Menu menu = new Menu();
         menu.setId(rs.getInt("id_menu"));
@@ -226,6 +266,8 @@ public class MenuRepositoryImpl implements IMenuRepository {
         menu.setDateModification(rs.getTimestamp("date_modification").toLocalDateTime());
         return menu;
     }
+
+    
 
 
 }
