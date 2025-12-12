@@ -62,4 +62,9 @@ public class ComplementService implements IComplementService {
         return complementRepository.findByNom(nom).isPresent();
     }
 
+    @Override
+    public List<Complement> listerTousComplements() {
+        return complementRepository.findAll();
+    }
+
 }

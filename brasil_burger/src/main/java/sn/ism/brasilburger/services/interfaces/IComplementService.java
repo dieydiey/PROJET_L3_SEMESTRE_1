@@ -8,4 +8,5 @@ import java.util.List;
 public interface IComplementService {
     boolean creerComplement(String nom, TypeComplement type, double prix, String image);
     public boolean existeNom(String nom);
+    List<Complement> listerTousComplements();
 }

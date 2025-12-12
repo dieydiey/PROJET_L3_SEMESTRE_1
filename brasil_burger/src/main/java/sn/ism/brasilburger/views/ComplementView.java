@@ -30,7 +30,7 @@ public class ComplementView {
                         
                         break;
                     case 2:
-                        //listerComplements();
+                        listerComplements();
                         break;
                     case 3:
                         //modifierComplement();
@@ -106,6 +106,41 @@ public class ComplementView {
         }
 
         ConsoleHelper.pause();
+    }
+
+    private void listerComplements() {
+        ConsoleHelper.afficherTitre("LISTE DES COMPLÉMENTS");
+
+        List<Complement> complements = complementService.listerTousComplements();
+
+        if (complements.isEmpty()) {
+            ConsoleHelper.afficherInfo("Aucun complément trouvé");
+        } else {
+            System.out.println("\n┌─────┬──────────────────────────┬──────────┬─────────────┬──────────┐");
+            System.out.println("│ ID  │ Nom                      │ Type     │ Prix (FCFA) │ Statut   │");
+            System.out.println("├─────┼──────────────────────────┼──────────┼─────────────┼──────────┤");
+
+            for (Complement complement : complements) {
+                String statut = complement.isArchive() ? "Archivé" : "Actif";
+                System.out.printf("│ %-3d │ %-24s │ %-8s │ %,11.0f │ %-8s │%n",
+                    complement.getId(),
+                    tronquer(complement.getNom(), 24),
+                    complement.getType(),
+                    complement.getPrix(),
+                    statut
+                );
+            }
+
+            System.out.println("└─────┴──────────────────────────┴──────────┴─────────────┴──────────┘");
+            System.out.printf("\nTotal: %d complément(s)\n", complements.size());
+        }
+
+        ConsoleHelper.pause();
+    }
+
+    private String tronquer(String texte, int longueur) {
+        if (texte.length() <= longueur) return texte;
+        return texte.substring(0, longueur - 3) + "...";
     }
 
 
