@@ -61,6 +61,18 @@ public class LivreurServiceImpl implements ILivreurService {
         }
     }
 
+    /**
+     * Valide le format du téléphone (sans lever d'exception)
+     * @param telephone le numéro à valider
+     * @return true si le format est valide, false sinon
+     */
+    public boolean validerTelephoneFormat(String telephone) {
+        if (telephone == null || telephone.isBlank()) {
+            return false;
+        }
+        return telephone.matches("^(77|78|75|76|70)[0-9]{7}$");
+    }
+
    
     private void verifierUniciteTelephone(String telephone) {
         Optional<Livreur> exist = livreurRepository.findByTelephone(telephone);

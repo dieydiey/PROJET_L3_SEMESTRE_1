@@ -18,19 +18,18 @@ public class LivreurRepositoryImpl implements ILivreurRepository {
     }
 
     @Override
-        
+
     public boolean save(Livreur livreur) {
-        String sql = "INSERT INTO livreur (nom, prenom,matricule, telephone, archive) VALUES (?, ?, ?,?,?)";
+        String sql = "INSERT INTO livreur (nom, prenom, matricule, telephone, disponible) VALUES (?, ?, ?, ?, ?)";
         try (PreparedStatement stmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             stmt.setString(1, livreur.getNom());
             stmt.setString(2, livreur.getPrenom());
-            stmt.setString(3, livreur.getTelephone());
-    
-            stmt.setString(4, livreur.getMatricule());
+            stmt.setString(3, livreur.getMatricule());
+            stmt.setString(4, livreur.getTelephone());
             stmt.setBoolean(5, livreur.isDisponible());
-            
+
             int rowsAffected = stmt.executeUpdate();
-            
+
             if (rowsAffected > 0) {
                 ResultSet rs = stmt.getGeneratedKeys();
                 if (rs.next()) {
@@ -43,23 +42,17 @@ public class LivreurRepositoryImpl implements ILivreurRepository {
         }
         return false;
     }
-    
 
     @Override
     public List<Livreur> findAll() {
-        String sql = "SELECT * FROM livreur WHERE archive = false";
+        String sql = "SELECT * FROM livreur";
         List<Livreur> livreurs = new ArrayList<>();
 
         try (Statement stmt = connection.createStatement();
                 ResultSet rs = stmt.executeQuery(sql)) {
 
             while (rs.next()) {
-                Livreur livreur = new Livreur();
-                livreur.setId(rs.getInt("id"));
-                livreur.setNom(rs.getString("nom"));
-                livreur.setTelephone(rs.getString("telephone"));
-                livreur.setDisponible(rs.getBoolean("disponible"));
-                livreurs.add(livreur);
+                livreurs.add(mapResultSetToLivreur(rs));
             }
         } catch (SQLException e) {
             throw new DatabaseException("Erreur lors de la récupération des livreurs: " + e.getMessage());
@@ -76,15 +69,22 @@ public class LivreurRepositoryImpl implements ILivreurRepository {
             ResultSet rs = stmt.executeQuery();
 
             if (rs.next()) {
-                Livreur livreur = new Livreur();
-                livreur.setId(rs.getInt("id"));
-                livreur.setNom(rs.getString("nom"));
-                livreur.setTelephone(rs.getString("telephone"));
-                return Optional.of(livreur);
+                return Optional.of(mapResultSetToLivreur(rs));
             }
         } catch (SQLException e) {
             throw new DatabaseException("Erreur lors de la recherche du livreur: " + e.getMessage());
         }
         return Optional.empty();
+    }
+
+    private Livreur mapResultSetToLivreur(ResultSet rs) throws SQLException {
+        Livreur livreur = new Livreur();
+        livreur.setId(rs.getInt("id_livreur"));
+        livreur.setNom(rs.getString("nom"));
+        livreur.setPrenom(rs.getString("prenom"));
+        livreur.setTelephone(rs.getString("telephone"));
+        livreur.setMatricule(rs.getString("matricule"));
+        livreur.setDisponible(rs.getBoolean("disponible"));
+        return livreur;
     }
 }

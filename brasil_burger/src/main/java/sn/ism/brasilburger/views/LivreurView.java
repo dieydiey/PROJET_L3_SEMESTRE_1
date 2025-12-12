@@ -59,13 +59,28 @@ public class LivreurView {
 
         String nom = ConsoleHelper.lireTexte("Nom du livreur");
         String prenom = ConsoleHelper.lireTexte("Prénom du livreur");
-        String telephone = ConsoleHelper.lireTexte("Téléphone du livreur");
+        
+        // Boucle pour valider le téléphone jusqu'à ce qu'il soit correct
+        String telephone;
+        boolean telephoneValide = false;
+        do {
+            telephone = ConsoleHelper.lireTexte("Téléphone du livreur (format Sénégal: 77/78/75/76/70 + 7 chiffres)");
+            if (livreurService.validerTelephoneFormat(telephone)) {
+                telephoneValide = true;
+            } else {
+                ConsoleHelper.afficherErreur("Numéro invalide. Veuillez entrer un numéro au format Sénégal (77, 78, 75, 76 ou 70 + 7 chiffres)");
+            }
+        } while (!telephoneValide);
 
-        boolean success = livreurService.creerLivreur(nom, prenom, telephone);
-        if (success) {
-            ConsoleHelper.afficherSucces("Livreur ajouté avec succès !");
-        } else {
-            ConsoleHelper.afficherErreur("Échec de l'ajout du livreur.");
+        try {
+            boolean success = livreurService.creerLivreur(nom, prenom, telephone);
+            if (success) {
+                ConsoleHelper.afficherSucces("Livreur ajouté avec succès !");
+            } else {
+                ConsoleHelper.afficherErreur("Échec de l'ajout du livreur.");
+            }
+        } catch (Exception e) {
+            ConsoleHelper.afficherErreur(e.getMessage());
         }
         ConsoleHelper.pause();
     }
