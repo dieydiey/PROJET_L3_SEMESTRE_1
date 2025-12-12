@@ -119,7 +119,7 @@ public class MenuView {
                     ConsoleHelper.afficherErreur("Ce nom existe déjà. Veuillez en saisir un autre.");
                 }
 
-            } while (burgerService.existeNom(nom));
+            } while (menuService.existeNom(nom));
             String image = ConsoleHelper.lireTexte("Nom de l'image (ex: menu.jpg)");
 
             if (menuService.creerMenu(nom, image)) {

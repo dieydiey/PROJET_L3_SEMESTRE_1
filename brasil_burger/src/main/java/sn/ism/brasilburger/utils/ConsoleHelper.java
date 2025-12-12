@@ -59,7 +59,14 @@ public class ConsoleHelper {
     public static boolean confirmer(String message) {
         System.out.print(message + " (o/n): ");
         String reponse = scanner.nextLine().trim().toLowerCase();
-        return reponse.equals("o") || reponse.equals("oui");
+        if (reponse.isEmpty()) return false;
+        // Accepter plusieurs variantes : 'o', 'oui', 'y', 'yes', '1' ou première lettre
+        if (reponse.equals("o") || reponse.equals("oui") || reponse.equals("y") || reponse.equals("yes") || reponse.equals("1")) {
+            return true;
+        }
+        // accepter si la première lettre est 'o' ou 'y' (utile si utilisateur tape 'o ' ou 'oui' partiel)
+        char first = reponse.charAt(0);
+        return first == 'o' || first == 'y';
     }
 
     public static void pause() {
