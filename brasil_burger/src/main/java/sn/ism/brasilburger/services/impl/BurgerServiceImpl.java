@@ -47,6 +47,7 @@ public class BurgerServiceImpl implements IBurgerService {
             throw new ValidationException("Le prix semble anormalement élevé");
         }
     }
+    
     @Override
     public boolean existeNom(String nom) {
         return burgerRepository.findByNom(nom).isPresent();
