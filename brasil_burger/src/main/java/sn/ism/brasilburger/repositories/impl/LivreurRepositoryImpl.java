@@ -26,8 +26,8 @@ public class LivreurRepositoryImpl implements ILivreurRepository {
             stmt.setString(2, livreur.getPrenom());
             stmt.setString(3, livreur.getTelephone());
     
-            stmt.setString(6, livreur.getMatricule());
-            stmt.setBoolean(7, livreur.isDisponible());
+            stmt.setString(4, livreur.getMatricule());
+            stmt.setBoolean(5, livreur.isDisponible());
             
             int rowsAffected = stmt.executeUpdate();
             

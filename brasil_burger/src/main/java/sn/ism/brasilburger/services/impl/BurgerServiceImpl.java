@@ -18,7 +18,7 @@ public class BurgerServiceImpl implements IBurgerService {
 
     @Override
     public boolean creerBurger(String nom, double prix, String image) {
-        // Validation des données (Business Logic)
+        
         validerNom(nom);
         validerPrix(prix);
         
