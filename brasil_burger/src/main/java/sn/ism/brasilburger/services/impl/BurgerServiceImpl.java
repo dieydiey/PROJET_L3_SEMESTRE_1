@@ -89,6 +89,11 @@ public class BurgerServiceImpl implements IBurgerService {
         return burgerRepository.update(burger);
     }
 
-    
+    @Override
+    public List<Burger> listerBurgersActifs() {
+        return burgerRepository.findActifs();
+    }
+
+
 
 }
