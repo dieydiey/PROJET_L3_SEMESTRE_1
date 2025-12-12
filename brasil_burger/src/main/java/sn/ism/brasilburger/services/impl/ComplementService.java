@@ -67,4 +67,22 @@ public class ComplementService implements IComplementService {
         return complementRepository.findAll();
     }
 
+    @Override
+    public Complement obtenirComplement(int id) {
+        Optional<Complement> complement = complementRepository.findById(id);
+        return complement.orElseThrow(() -> new EntityNotFoundException("Complément non trouvé avec l'id: " + id));
+    }
+    @Override
+    public boolean modifierComplement(int id, String nom, TypeComplement type, double prix, String image) {
+        validerNom(nom);
+        validerType(type);
+        validerPrix(prix);
+        Complement complement = obtenirComplement(id);
+        complement.setNom(nom);
+        complement.setType(type);
+        complement.setPrix(prix);
+        complement.setImage(image);
+        return complementRepository.update(complement);
+    }
+
 }

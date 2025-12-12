@@ -33,7 +33,7 @@ public class ComplementView {
                         listerComplements();
                         break;
                     case 3:
-                        //modifierComplement();
+                        modifierComplement();
                         break;
                     case 4:
                         //archiverComplement();
@@ -141,6 +141,58 @@ public class ComplementView {
     private String tronquer(String texte, int longueur) {
         if (texte.length() <= longueur) return texte;
         return texte.substring(0, longueur - 3) + "...";
+    }
+
+    private void modifierComplement() {
+        ConsoleHelper.afficherTitre("MODIFIER UN COMPLÉMENT");
+
+        Complement complement = null;
+
+        while (complement == null) {
+            int id = ConsoleHelper.lireEntier("ID du complément à modifier");
+
+            try {
+                complement = complementService.obtenirComplement(id);
+            } catch (EntityNotFoundException e) {
+                ConsoleHelper.afficherErreur(e.getMessage());
+            }
+        }
+
+        try {
+            String nom;
+            do {
+                nom = ConsoleHelper.lireTexte("Nouveau nom du complément (actuel: " + complement.getNom() + ")");
+
+                if (!nom.equals(complement.getNom()) && complementService.existeNom(nom)) {
+                    ConsoleHelper.afficherErreur("Ce nom existe déjà. Veuillez en saisir un autre.");
+                }
+
+            } while (!nom.equals(complement.getNom()) && complementService.existeNom(nom));
+
+            System.out.println("\nType de complément actuel: " + complement.getType());
+            System.out.println("  1. Boisson");
+            System.out.println("  2. Frites");
+
+            int typeChoix;
+            do {
+                typeChoix = ConsoleHelper.lireEntier("Votre choix");
+            } while (typeChoix != 1 && typeChoix != 2);
+
+            TypeComplement type = (typeChoix == 1)
+                ? TypeComplement.BOISSON
+                : TypeComplement.FRITES;
+
+            double prix = ConsoleHelper.lireDecimal("Nouveau prix (FCFA) (actuel: " + complement.getPrix() + ")");
+            String image = ConsoleHelper.lireTexte("Nouveau nom de l'image (ex: coca.jpg) (actuel: " + complement.getImage() + ")");
+
+            if (complementService.modifierComplement(complement.getId(), nom, type, prix, image)) {
+                ConsoleHelper.afficherSucces("Complément modifié avec succès !");
+            }
+        } catch (ValidationException e) {
+            ConsoleHelper.afficherErreur("Validation: " + e.getMessage());
+        }
+
+        ConsoleHelper.pause();
     }
 
 
