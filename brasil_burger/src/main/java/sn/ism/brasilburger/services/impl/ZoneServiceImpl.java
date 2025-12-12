@@ -61,5 +61,10 @@ public class ZoneServiceImpl implements IZoneService{
         return zoneRepository.findByNom(nom).isPresent();
     }
 
+    @Override
+    public List<Zone> listerToutesZones() {
+        return zoneRepository.findAll();
+    }
+
 
 }
