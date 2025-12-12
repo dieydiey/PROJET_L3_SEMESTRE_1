@@ -46,9 +46,6 @@ public class MenuView {
                     case 5:
                         restaurerMenu();
                         break;
-                    case 6:
-                        //voirDetailsMenu();
-                        break;
                     case 0:
                         retour = true;
                         break;
@@ -67,12 +64,11 @@ public class MenuView {
         System.out.println("╔═══════════════════════════════════════════════════════╗");
         System.out.println("║          📦 GESTION DES MENUS                        ║");
         System.out.println("╠═══════════════════════════════════════════════════════╣");
-        System.out.println("║  1. Lister tous les menus                            ║");
+        System.out.println("║  1. Lister tous les menus                             ║");
         System.out.println("║  2. Créer un menu                                     ║");
         System.out.println("║  3. Modifier un menu                                  ║");
-        System.out.println("║  4. Archiver un menu                        ║");
-        System.out.println("║  5. Restaurer un menu                            ║");
-        System.out.println("║  6. Voir détails d'un menu                            ║");
+        System.out.println("║  4. Archiver un menu                                  ║");
+        System.out.println("║  5. Restaurer un menu                                 ║");
         System.out.println("║  0. Retour au menu principal                          ║");
         System.out.println("╚═══════════════════════════════════════════════════════╝");
     }
