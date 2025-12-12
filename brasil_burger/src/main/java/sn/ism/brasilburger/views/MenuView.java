@@ -9,6 +9,7 @@ import sn.ism.brasilburger.services.interfaces.IBurgerService;
 import sn.ism.brasilburger.services.interfaces.IComplementService;
 import sn.ism.brasilburger.services.interfaces.IMenuService;
 
+
 public class MenuView {
     private final IMenuService menuService;
     private final IBurgerService burgerService;
@@ -37,7 +38,7 @@ public class MenuView {
                         listerMenus();
                         break;
                     case 3:
-                        //modifierMenu();
+                        modifierMenu();
                         break;
                     case 4:
                         //archiverMenu();
@@ -205,6 +206,47 @@ public class MenuView {
         if (menuService.ajouterComposition(idMenu, null, idComplement, quantite)) {
             ConsoleHelper.afficherSucces("Complément ajouté au menu !");
         }
+    }
+
+    private void modifierMenu() {
+        ConsoleHelper.afficherTitre("MODIFIER UN MENU");
+
+        Menu menu = null;
+
+        while (menu == null) {
+            try {
+                int id = ConsoleHelper.lireEntier("ID du menu à modifier");
+                menu = menuService.obtenirMenu(id); 
+
+            } catch (EntityNotFoundException e) {
+                ConsoleHelper.afficherErreur(e.getMessage());
+                System.out.println("Veuillez saisir un ID valide.\n");
+            }
+        }
+
+        System.out.println("\nMenu actuel: " + menu.getNom() + " - " + menu.getPrixTotal() + " FCFA");
+
+        try {
+            String nouveauNom ;
+            do {
+                nouveauNom = ConsoleHelper.lireTexte("Nouveau nom du menu");
+
+                if (menuService.existeNom(nouveauNom)) {
+                    ConsoleHelper.afficherErreur("Ce nom existe déjà. Veuillez en saisir un autre.");
+                }
+
+            } while (menuService.existeNom(nouveauNom));
+
+            String nouvelleImage = ConsoleHelper.lireTexte("Nouveau nom de l'image (ex: menu.jpg)");
+
+            if (menuService.modifierMenu(menu.getId(), nouveauNom, nouvelleImage)) {
+                ConsoleHelper.afficherSucces("Menu modifié avec succès !");
+            }
+        } catch (ValidationException e) {
+            ConsoleHelper.afficherErreur("Validation: " + e.getMessage());
+        }
+
+        ConsoleHelper.pause();
     }
 
 

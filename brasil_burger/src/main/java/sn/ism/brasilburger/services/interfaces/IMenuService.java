@@ -11,4 +11,5 @@ public interface IMenuService {
     boolean ajouterComposition(int idMenu, Integer idBurger, Integer idComplement, int quantite);
     public Menu obtenirMenu(int id);
     public double calculerPrixMenu(int idMenu);
+    boolean modifierMenu(int id, String nom, String image);
 }

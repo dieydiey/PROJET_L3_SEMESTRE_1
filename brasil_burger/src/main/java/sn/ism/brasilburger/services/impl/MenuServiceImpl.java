@@ -96,5 +96,14 @@ public class MenuServiceImpl implements IMenuService{
         return menuRepository.addComposition(composition);
     }
 
+    @Override
+    public boolean modifierMenu(int id, String nom, String image) {
+        validerNom(nom);
+        Menu menu = obtenirMenu(id);
+        menu.setNom(nom);
+        menu.setImage(image);
+        return menuRepository.update(menu);
+    }
+
     
 }
