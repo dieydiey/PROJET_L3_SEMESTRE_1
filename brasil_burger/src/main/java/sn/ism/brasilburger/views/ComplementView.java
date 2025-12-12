@@ -36,7 +36,7 @@ public class ComplementView {
                         modifierComplement();
                         break;
                     case 4:
-                        //archiverComplement();
+                        archiverComplement();
                         break;
                     case 5:
                         //filtrerParType();
@@ -62,8 +62,8 @@ public class ComplementView {
         System.out.println("║  1.Ajouter un complément                              ║");
         System.out.println("║  2.Lister tous les compléments                        ║");
         System.out.println("║  3. Modifier un complément                            ║");
-        System.out.println("║  4. Archiver/Restaurer un complément                  ║");
-        System.out.println("║  5. Filtrer par type                                  ║");
+        System.out.println("║  4. Archiver un complément                            ║");
+        System.out.println("║  5. Restaurer un complément                           ║");
         System.out.println("║  0. Retour au menu principal                          ║");
         System.out.println("╚═══════════════════════════════════════════════════════╝");
     }
@@ -187,6 +187,41 @@ public class ComplementView {
 
             if (complementService.modifierComplement(complement.getId(), nom, type, prix, image)) {
                 ConsoleHelper.afficherSucces("Complément modifié avec succès !");
+            }
+        } catch (ValidationException e) {
+            ConsoleHelper.afficherErreur("Validation: " + e.getMessage());
+        }
+
+        ConsoleHelper.pause();
+    }
+
+    private void archiverComplement() {
+        ConsoleHelper.afficherTitre("ARCHIVER/RESTAURER UN COMPLÉMENT");
+
+        Complement complement = null;
+
+        while (complement == null) {
+            int id = ConsoleHelper.lireEntier("ID du complément à archiver/restaurer");
+
+            try {
+                complement = complementService.obtenirComplement(id);
+            } catch (EntityNotFoundException e) {
+                ConsoleHelper.afficherErreur(e.getMessage());
+            }
+        }
+
+        try {
+            boolean nouvelEtat = !complement.isArchive();
+            String action = nouvelEtat ? "archivé" : "restauré";
+
+            if (complementService.modifierComplement(
+                complement.getId(),
+                complement.getNom(),
+                complement.getType(),
+                complement.getPrix(),
+                complement.getImage()
+            )) {
+                ConsoleHelper.afficherSucces("Complément " + action + " avec succès !");
             }
         } catch (ValidationException e) {
             ConsoleHelper.afficherErreur("Validation: " + e.getMessage());

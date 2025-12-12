@@ -85,4 +85,11 @@ public class ComplementService implements IComplementService {
         return complementRepository.update(complement);
     }
 
+    @Override
+    public boolean archiverComplement(int id) {
+        Complement complement = obtenirComplement(id);
+        complement.setArchive(true);
+        return complementRepository.update(complement);
+    }
+
 }
