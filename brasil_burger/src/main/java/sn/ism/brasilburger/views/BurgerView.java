@@ -36,6 +36,9 @@ public class BurgerView {
                     case 4:
                         archiverBurger();
                         break;
+                    case 5:
+                        restaurerBurger();
+                        break;
                     case 0:
                         retour = true;
                         break;
@@ -57,8 +60,8 @@ public class BurgerView {
         System.out.println("║  1. Ajouter un burger                                 ║");
         System.out.println("║  2. Lister tous les burgers                           ║");
         System.out.println("║  3. Modifier un burger                                ║");
-        System.out.println("║  4. Archiver/Restaurer un burger                      ║");
-        System.out.println("║  5. Rechercher un burger                              ║");
+        System.out.println("║  4. Archiver un burger                                ║");
+        System.out.println("║  5. Restaurer un burger                               ║");
         System.out.println("║  0. Retour au menu principal                          ║");
         System.out.println("╚═══════════════════════════════════════════════════════╝");
     }
@@ -186,6 +189,40 @@ public class BurgerView {
 
         ConsoleHelper.pause();
     }
+    
+    private void restaurerBurger() {
+        ConsoleHelper.afficherTitre("RESTAURER UN BURGER");
+
+        Burger burger = null;
+
+        while (true) {
+            try {
+                int id = ConsoleHelper.lireEntier("ID du burger à restaurer");
+                burger = burgerService.obtenirBurger(id); // Exception si introuvable
+
+                if (!burger.isArchive()) {
+                    ConsoleHelper.afficherInfo("Le burger '" + burger.getNom() + "' n'est pas archivé.");
+                    System.out.println("Veuillez saisir un ID d'un burger archivé.\n");
+                    continue; 
+                }
+
+                break;
+
+            } catch (EntityNotFoundException e) {
+                ConsoleHelper.afficherErreur(e.getMessage());
+                System.out.println("Veuillez saisir un ID valide.\n");
+            }
+        }
+
+        if (ConsoleHelper.confirmer("Voulez-vous restaurer le burger '" + burger.getNom() + "' ?")) {
+            if (burgerService.restaurerBurger(burger.getId())) {
+                ConsoleHelper.afficherSucces("Burger restauré avec succès !");
+            }
+        }
+
+        ConsoleHelper.pause();
+    }
+
 
 
 

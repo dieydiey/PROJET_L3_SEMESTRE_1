@@ -11,4 +11,5 @@ public interface IBurgerService {
     boolean modifierBurger(int id, String nom, double prix, String image);
     Burger obtenirBurger(int id);
     boolean archiverBurger(int id);
+    boolean restaurerBurger(int id);
 }

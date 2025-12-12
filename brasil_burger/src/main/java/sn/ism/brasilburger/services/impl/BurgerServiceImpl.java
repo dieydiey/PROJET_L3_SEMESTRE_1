@@ -81,4 +81,11 @@ public class BurgerServiceImpl implements IBurgerService {
         return burgerRepository.update(burger);
     }
 
+    @Override
+    public boolean restaurerBurger(int id) {
+        Burger burger = obtenirBurger(id);
+        burger.setArchive(false);
+        return burgerRepository.update(burger);
+    }
+
 }
