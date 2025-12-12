@@ -57,4 +57,21 @@ public class BurgerServiceImpl implements IBurgerService {
         return burgerRepository.findAll();
     }
 
+    @Override
+    public Burger obtenirBurger(int id) {
+        Optional<Burger> burger = burgerRepository.findById(id);
+        return burger.orElseThrow(() -> new EntityNotFoundException("Burger non trouvé avec l'id: " + id));
+    }
+
+     @Override
+    public boolean modifierBurger(int id, String nom, double prix, String image) {
+        validerNom(nom);
+        validerPrix(prix);
+        Burger burger = obtenirBurger(id);
+        burger.setNom(nom);
+        burger.setPrix(prix);
+        burger.setImage(image);
+        return burgerRepository.update(burger);
+    }
+
 }

@@ -31,7 +31,7 @@ public class BurgerView {
                         listerBurgers();
                         break;
                     case 3:
-                       // modifierBurger();
+                       modifierBurger();
                         break;
                     case 4:
                         //archiverBurger();
@@ -54,7 +54,7 @@ public class BurgerView {
         System.out.println("╔═══════════════════════════════════════════════════════╗");
         System.out.println("║          🍔 GESTION DES BURGERS                      ║");
         System.out.println("╠═══════════════════════════════════════════════════════╣");
-        System.out.println("║  1. Ajouter un burger                          ║");
+        System.out.println("║  1. Ajouter un burger                                 ║");
         System.out.println("║  2. Lister tous les burgers                           ║");
         System.out.println("║  3. Modifier un burger                                ║");
         System.out.println("║  4. Archiver/Restaurer un burger                      ║");
@@ -125,6 +125,48 @@ public class BurgerView {
         }
         return texte.substring(0, longueur - 3) + "...";
     }
+
+    private void modifierBurger() {
+    ConsoleHelper.afficherTitre("MODIFIER UN BURGER");
+
+    Burger burger = null;
+
+    // 🔁 Boucle jusqu'à obtenir un ID existant
+    while (burger == null) {
+        try {
+            int id = ConsoleHelper.lireEntier("ID du burger à modifier");
+            burger = burgerService.obtenirBurger(id); // lance exception si non trouvé
+
+        } catch (EntityNotFoundException e) {
+            ConsoleHelper.afficherErreur(e.getMessage());
+            System.out.println("Veuillez saisir un ID valide.\n");
+        }
+    }
+
+    // 🎉 À partir d'ici, "burger" est forcément valide
+    System.out.println("\nBurger actuel: " + burger.getNom() + " - " + burger.getPrix() + " FCFA");
+
+    try {
+        String nom = ConsoleHelper.lireTexte("Nouveau nom [" + burger.getNom() + "]");
+        if (nom.isEmpty()) nom = burger.getNom();
+
+        System.out.print("Nouveau prix [" + burger.getPrix() + "]: ");
+        String prixStr = ConsoleHelper.lireTexte("");
+        double prix = prixStr.isEmpty() ? burger.getPrix() : Double.parseDouble(prixStr);
+
+        String image = ConsoleHelper.lireTexte("Nouvelle image [" + burger.getImage() + "]");
+        if (image.isEmpty()) image = burger.getImage();
+
+        if (burgerService.modifierBurger(burger.getId(), nom, prix, image)) {
+            ConsoleHelper.afficherSucces("Burger modifié avec succès !");
+        }
+
+    } catch (ValidationException e) {
+        ConsoleHelper.afficherErreur("Validation: " + e.getMessage());
+    }
+
+    ConsoleHelper.pause();
+}
 
 
 

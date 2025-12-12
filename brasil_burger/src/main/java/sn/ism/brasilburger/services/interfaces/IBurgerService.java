@@ -8,4 +8,6 @@ public interface IBurgerService {
     boolean creerBurger(String nom, double prix, String image);
     public boolean existeNom(String nom);
     List<Burger> listerTousBurgers();
+    boolean modifierBurger(int id, String nom, double prix, String image);
+    Burger obtenirBurger(int id);
 }
