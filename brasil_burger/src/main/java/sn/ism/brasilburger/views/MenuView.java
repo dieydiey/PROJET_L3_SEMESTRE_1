@@ -31,10 +31,10 @@ public class MenuView {
 
                 switch (choix) {
                     case 1:
-                        listerMenus();
+                        ajouterMenu();
                         break;
                     case 2:
-                        //listerMenu();
+                        listerMenus();
                         break;
                     case 3:
                         //modifierMenu();
@@ -104,6 +104,107 @@ public class MenuView {
     private String tronquer(String texte, int longueur) {
         if (texte.length() <= longueur) return texte;
         return texte.substring(0, longueur - 3) + "...";
+    }
+
+    private void ajouterMenu() {
+        ConsoleHelper.afficherTitre("CRÉER UN MENU");
+
+        try {
+            String nom ;
+            do {
+                nom = ConsoleHelper.lireTexte("Nom du menu");
+
+                if (menuService.existeNom(nom)) {
+                    ConsoleHelper.afficherErreur("Ce nom existe déjà. Veuillez en saisir un autre.");
+                }
+
+            } while (burgerService.existeNom(nom));
+            String image = ConsoleHelper.lireTexte("Nom de l'image (ex: menu.jpg)");
+
+            if (menuService.creerMenu(nom, image)) {
+                ConsoleHelper.afficherSucces("Menu créé avec succès !");
+                
+                if (ConsoleHelper.confirmer("Voulez-vous ajouter des éléments au menu maintenant ?")) {
+                    List<Menu> menus = menuService.listerTousMenus();
+                    if (!menus.isEmpty()) {
+                        int idMenu = menus.get(0).getId();
+                        ajouterCompositions(idMenu);
+                    }
+                }
+            }
+        } catch (ValidationException e) {
+            ConsoleHelper.afficherErreur("Validation: " + e.getMessage());
+        }
+
+        ConsoleHelper.pause();
+    }
+
+    private void ajouterCompositions(int idMenu) {
+        boolean continuer = true;
+        
+        while (continuer) {
+            ConsoleHelper.afficherSousTitre("Ajouter un élément au menu");
+            System.out.println("1. Ajouter un burger");
+            System.out.println("2. Ajouter un complément");
+            System.out.println("0. Terminer");
+            
+            int choix = ConsoleHelper.lireEntier("Votre choix");
+            
+            switch (choix) {
+                case 1:
+                    ajouterBurgerAuMenu(idMenu);
+                    break;
+                case 2:
+                    ajouterComplementAuMenu(idMenu);
+                    break;
+                case 0:
+                    continuer = false;
+                    break;
+            }
+        }
+    }
+
+    private void ajouterBurgerAuMenu(int idMenu) {
+        List<Burger> burgers = burgerService.listerBurgersActifs();
+        
+        if (burgers.isEmpty()) {
+            ConsoleHelper.afficherErreur("Aucun burger actif disponible");
+            return;
+        }
+        
+        System.out.println("\nBurgers disponibles:");
+        for (Burger burger : burgers) {
+            System.out.printf("  [%d] %s - %.0f FCFA%n", burger.getId(), burger.getNom(), burger.getPrix());
+        }
+        
+        int idBurger = ConsoleHelper.lireEntier("ID du burger");
+        int quantite = ConsoleHelper.lireEntier("Quantité");
+        
+        if (menuService.ajouterComposition(idMenu, idBurger, null, quantite)) {
+            ConsoleHelper.afficherSucces("Burger ajouté au menu !");
+        }
+    }
+
+    private void ajouterComplementAuMenu(int idMenu) {
+        List<Complement> complements = complementService.listerComplementsActifs();
+        
+        if (complements.isEmpty()) {
+            ConsoleHelper.afficherErreur("Aucun complément actif disponible");
+            return;
+        }
+        
+        System.out.println("\nCompléments disponibles:");
+        for (Complement complement : complements) {
+            System.out.printf("  [%d] %s (%s) - %.0f FCFA%n", 
+                complement.getId(), complement.getNom(), complement.getType(), complement.getPrix());
+        }
+        
+        int idComplement = ConsoleHelper.lireEntier("ID du complément");
+        int quantite = ConsoleHelper.lireEntier("Quantité");
+        
+        if (menuService.ajouterComposition(idMenu, null, idComplement, quantite)) {
+            ConsoleHelper.afficherSucces("Complément ajouté au menu !");
+        }
     }
 
 

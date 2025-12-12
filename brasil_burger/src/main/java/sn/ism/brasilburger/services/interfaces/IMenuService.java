@@ -6,4 +6,9 @@ import java.util.List;
 
 public interface IMenuService {
     List<Menu> listerTousMenus();
+    public boolean existeNom(String nom);
+    boolean creerMenu(String nom, String image);
+    boolean ajouterComposition(int idMenu, Integer idBurger, Integer idComplement, int quantite);
+    public Menu obtenirMenu(int id);
+    public double calculerPrixMenu(int idMenu);
 }

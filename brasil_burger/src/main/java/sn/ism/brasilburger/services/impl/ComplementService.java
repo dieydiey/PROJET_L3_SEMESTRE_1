@@ -99,4 +99,9 @@ public class ComplementService implements IComplementService {
         return complementRepository.update(complement);
     }
 
+    @Override
+    public List<Complement> listerComplementsActifs() {
+        return complementRepository.findActifs();
+    }
+
 }

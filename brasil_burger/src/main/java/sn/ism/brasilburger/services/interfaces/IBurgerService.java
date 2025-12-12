@@ -12,4 +12,5 @@ public interface IBurgerService {
     Burger obtenirBurger(int id);
     boolean archiverBurger(int id);
     boolean restaurerBurger(int id);
+    List<Burger> listerBurgersActifs();
 }

@@ -13,5 +13,6 @@ public interface IComplementService {
     boolean modifierComplement(int id, String nom, TypeComplement type, double prix, String image);
     boolean archiverComplement(int id);
     boolean restaurerComplement(int id);
+    public List<Complement> listerComplementsActifs();
 
 }
