@@ -1,8 +1,8 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
-using C_BrasilBurger.Models;
+using brasilBurger.Models;
 
-namespace C_BrasilBurger.Controllers;
+namespace brasilBurger.Controllers;
 
 public class HomeController : Controller
 {
@@ -15,9 +15,8 @@ public class HomeController : Controller
 
     public IActionResult Index()
     {
-        return Content("Déploiement C# OK 🚀");
+        return View();
     }
-
 
     public IActionResult Privacy()
     {

@@ -13,11 +13,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Dieynaba\\OneDrive\\Desktop\\PROJET_L3_SEMESTRE_1\\C#BrasilBurger\\C#BrasilBurger.csproj",
-      "projectName": "C#BrasilBurger",
-      "projectPath": "C:\\Users\\Dieynaba\\OneDrive\\Desktop\\PROJET_L3_SEMESTRE_1\\C#BrasilBurger\\C#BrasilBurger.csproj",
+      "projectUniqueName": "C:\\Users\\Dieynaba\\OneDrive\\Desktop\\PROJET_L3_SEMESTRE_1\\brasilBurger\\brasilBurger\\brasilBurger.csproj",
+      "projectName": "brasilBurger",
+      "projectPath": "C:\\Users\\Dieynaba\\OneDrive\\Desktop\\PROJET_L3_SEMESTRE_1\\brasilBurger\\brasilBurger\\brasilBurger.csproj",
       "packagesPath": "C:\\Users\\Dieynaba\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Dieynaba\\OneDrive\\Desktop\\PROJET_L3_SEMESTRE_1\\C#BrasilBurger\\obj\\",
+      "outputPath": "C:\\Users\\Dieynaba\\OneDrive\\Desktop\\PROJET_L3_SEMESTRE_1\\brasilBurger\\brasilBurger\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\Dieynaba\\AppData\\Roaming\\NuGet\\NuGet.Config"
