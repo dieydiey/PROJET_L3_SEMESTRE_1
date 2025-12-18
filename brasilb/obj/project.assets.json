@@ -13,11 +13,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Dieynaba\\OneDrive\\Desktop\\PROJET_L3_SEMESTRE_1\\brasilb\\brasilb\\brasilb.csproj",
+      "projectUniqueName": "C:\\Users\\Dieynaba\\OneDrive\\Desktop\\PROJET_L3_SEMESTRE_1\\brasilb\\brasilb.csproj",
       "projectName": "brasilb",
-      "projectPath": "C:\\Users\\Dieynaba\\OneDrive\\Desktop\\PROJET_L3_SEMESTRE_1\\brasilb\\brasilb\\brasilb.csproj",
+      "projectPath": "C:\\Users\\Dieynaba\\OneDrive\\Desktop\\PROJET_L3_SEMESTRE_1\\brasilb\\brasilb.csproj",
       "packagesPath": "C:\\Users\\Dieynaba\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Dieynaba\\OneDrive\\Desktop\\PROJET_L3_SEMESTRE_1\\brasilb\\brasilb\\obj\\",
+      "outputPath": "C:\\Users\\Dieynaba\\OneDrive\\Desktop\\PROJET_L3_SEMESTRE_1\\brasilb\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\Dieynaba\\AppData\\Roaming\\NuGet\\NuGet.Config"
