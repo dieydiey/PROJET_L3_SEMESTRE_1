@@ -2,10 +2,10 @@ FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 WORKDIR /src
 
 # Copier le dossier du projet
-COPY brasilBurger/ ./brasilBurger/
+COPY brasilb/ ./brasilb/
 
 # Aller dans le dossier du projet
-WORKDIR /src/brasilBurger
+WORKDIR /src/brasilb
 
 # Restaurer et publier
 RUN dotnet restore
@@ -16,4 +16,5 @@ WORKDIR /app
 EXPOSE 8080
 
 COPY --from=build /app/publish .
-ENTRYPOINT ["dotnet", "brasilBurger.dll"]
+ENTRYPOINT ["dotnet", "brasilb.dll"]
+
