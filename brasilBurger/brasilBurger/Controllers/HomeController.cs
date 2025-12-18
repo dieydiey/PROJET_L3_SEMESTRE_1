@@ -15,7 +15,7 @@ public class HomeController : Controller
 
     public IActionResult Index()
     {
-        return View();
+        return Content("Déploiement C# OK 🚀");
     }
 
     public IActionResult Privacy()
