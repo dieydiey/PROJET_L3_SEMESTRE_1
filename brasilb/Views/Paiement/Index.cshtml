@@ -1,0 +1,92 @@
+@{
+    ViewData["Title"] = "Paiement";
+    Layout = "_Layout";
+    var commande = ViewBag.Commande as BrasilBurger.Models.Commande;
+}
+
+<div class="container">
+    <h1 style="font-size: 42px; margin-bottom: 15px;">💳 Paiement</h1>
+    <p style="color: #757575; font-size: 18px; margin-bottom: 40px;">Choisissez votre méthode de paiement</p>
+
+    <div style="max-width: 800px; margin: 0 auto;">
+        <div class="cart-container">
+            <!-- Résumé de la commande -->
+            <div style="background: #f5f5f5; padding: 20px; border-radius: 10px; margin-bottom: 30px;">
+                <h3 style="margin-bottom: 15px;">Récapitulatif de votre commande</h3>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                    <span>Numéro de commande:</span>
+                    <strong>@commande.NumeroCommande</strong>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                    <span>Mode de consommation:</span>
+                    <strong>
+                        @if (commande.ModeConsommation == BrasilBurger.Models.ModeConsommation.sur_place)
+                        {
+                            <span><i class="fa-solid fa-house-chimney"></i> Sur place</span>
+                        }
+                        else if (commande.ModeConsommation == BrasilBurger.Models.ModeConsommation.a_emporte)
+                        {
+                            <span><i class="fa-solid fa-bag-shopping"></i> À emporter</span>
+                        }
+                        else
+                        {
+                            <span><i class="fa-solid fa-truck"></i> Livraison</span>
+                        }
+                    </strong>
+                </div>
+                <div style="display: flex; justify-content: space-between; padding-top: 15px; border-top: 2px solid #ddd; margin-top: 15px;">
+                    <span style="font-size: 20px; font-weight: bold;">Montant à payer:</span>
+                    <span style="font-size: 24px; font-weight: bold; color: #E53935;">@commande.MontantTotal.ToString("N0") FCFA</span>
+                </div>
+            </div>
+
+            <!-- Méthodes de paiement -->
+            <h3 style="margin-bottom: 20px;">Choisissez votre méthode de paiement</h3>
+            
+            <form method="post" asp-action="Traiter" asp-route-idCommande="@commande.IdCommande">
+                <div style="display: flex; flex-direction: column; gap: 15px; margin-bottom: 30px;">
+                    <label style="padding: 20px; border: 2px solid #e0e0e0; border-radius: 10px; cursor: pointer; display: flex; align-items: center; gap: 15px; transition: all 0.3s;" class="payment-option">
+                        <input type="radio" name="MethodePaiement" value="wave" checked style="width: 20px; height: 20px;">
+                        <div style="font-size: 40px;">📱</div>
+                        <div style="flex: 1;">
+                            <div style="font-weight: bold; font-size: 18px;">Wave</div>
+                            <div style="color: #757575; font-size: 14px;">Paiement mobile rapide et sécurisé</div>
+                        </div>
+                    </label>
+
+                    <label style="padding: 20px; border: 2px solid #e0e0e0; border-radius: 10px; cursor: pointer; display: flex; align-items: center; gap: 15px; transition: all 0.3s;" class="payment-option">
+                        <input type="radio" name="MethodePaiement" value="om" style="width: 20px; height: 20px;">
+                        <div style="font-size: 40px;">📲</div>
+                        <div style="flex: 1;">
+                            <div style="font-weight: bold; font-size: 18px;">Orange Money</div>
+                            <div style="color: #757575; font-size: 14px;">Paiement via Orange Money</div>
+                        </div>
+                    </label>
+                </div>
+
+                <button type="submit" class="btn btn-primary" style="width: 100%; padding: 18px; font-size: 18px; background: #E53935; color: white;">
+                    Payer @commande.MontantTotal.ToString("N0") FCFA
+                </button>
+            </form>
+
+            <div style="text-align: center; margin-top: 20px; color: #757575; font-size: 14px;">
+                🔒 Paiement 100% sécurisé
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+document.querySelectorAll('.payment-option').forEach(option => {
+    option.addEventListener('click', function() {
+        document.querySelectorAll('.payment-option').forEach(opt => {
+            opt.style.borderColor = '#e0e0e0';
+            opt.style.background = 'white';
+        });
+        this.style.borderColor = '#E53935';
+        this.style.background = '#fff5f5';
+    });
+});
+</script>
+}
