@@ -1,0 +1,107 @@
+@model BrasilBurger.Models.ViewModels.PanierViewModel
+@{
+    ViewData["Title"] = "Panier";
+    Layout = "_Layout";
+}
+
+<div class="container">
+    <h1 style="font-size: 42px; margin-bottom: 40px;">🛒 Mon Panier</h1>
+
+    @if (!Model.Articles.Any())
+    {
+        <div style="text-align: center; padding: 60px 20px; background: white; border-radius: 15px;">
+            <div style="font-size: 80px; margin-bottom: 20px;">🛒</div>
+            <h2 style="margin-bottom: 15px;">Votre panier est vide</h2>
+            <p style="color: #757575; margin-bottom: 30px;">Ajoutez des produits pour commencer</p>
+            <a asp-controller="Catalogue" asp-action="Index" class="btn btn-primary" style="padding: 15px 40px;">
+                Découvrir le catalogue
+            </a>
+        </div>
+    }
+    else
+    {
+        <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 30px;">
+            <!-- Articles du panier -->
+            <div class="cart-container">
+                <h2 style="font-size: 24px; margin-bottom: 20px;">Articles (@Model.Articles.Count)</h2>
+
+                @for (int i = 0; i < Model.Articles.Count; i++)
+                {
+                    var article = Model.Articles[i];
+                    <div class="cart-item">
+                        <div class="cart-item-image" style="background-image: url('@article.Image'); background-size: cover; background-position: center;"></div>
+                        <div class="cart-item-info">
+                            <h3>@article.Nom</h3>
+                            
+                            @if (article.Complements != null && article.Complements.Any())
+                            {
+                                <ul style="list-style: none; padding: 0; margin: 5px 0; font-size: 13px; color: #4CAF50;">
+                                    @foreach (var comp in article.Complements)
+                                    {
+                                        <li><i class="fa-solid fa-plus"></i> @comp.Nom (+@comp.Prix.ToString("N0") FCFA)</li>
+                                    }
+                                </ul>
+                            }
+                            
+                            <div class="cart-item-price">
+                                @article.Prix.ToString("N0") FCFA 
+                                @if(article.Complements.Any()){ <span>(+ @article.Complements.Sum(c => c.Prix).ToString("N0") compléments)</span> }
+                                × @article.Quantite
+                            </div>
+                        </div>
+                        <div class="cart-item-qty">
+                            <form method="post" asp-action="UpdateQuantite" style="display: flex; align-items: center; gap: 15px;">
+                                <input type="hidden" name="index" value="@i" />
+                                <button type="submit" name="quantite" value="@(article.Quantite - 1)" class="mini-qty-btn" @(article.Quantite <= 1 ? "disabled" : "")>−</button>
+                                <span style="font-weight: bold;">@article.Quantite</span>
+                                <button type="submit" name="quantite" value="@(article.Quantite + 1)" class="mini-qty-btn">+</button>
+                            </form>
+                        </div>
+                        <div>
+                            <div class="cart-item-total">@article.SousTotal.ToString("N0") FCFA</div>
+                            <form method="post" asp-action="SupprimerArticle">
+                                <input type="hidden" name="index" value="@i" />
+                                <button type="submit" style="background: none; border: none; color: #F44336; cursor: pointer; margin-top: 10px;">
+                                    <i class="fa-sharp-duotone fa-regular fa-trash icone-white"></i> Retirer
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                }
+
+                <div style="text-align: center; padding: 30px;">
+                    <a asp-controller="Catalogue" asp-action="Index" class="btn btn-secondary">← Continuer mes achats</a>
+                    <form method="post" asp-action="ViderPanier" style="display: inline; margin-left: 15px;">
+                        <button type="submit" class="btn btn-danger">🗑️ Vider le panier</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Récapitulatif -->
+            <div>
+                <div class="cart-container">
+                    <h2 style="font-size: 24px; margin-bottom: 25px;">Récapitulatif</h2>
+
+                    <div class="cart-summary">
+                        <div class="summary-line">
+                            <span>Sous-total</span>
+                            <span style="font-weight: bold;">@Model.MontantTotal.ToString("N0") FCFA</span>
+                        </div>
+                        <div class="summary-total">
+                            <span>TOTAL</span>
+                            <span>@Model.MontantTotal.ToString("N0") FCFA</span>
+                        </div>
+                    </div>
+
+                    <a asp-controller="Commande" asp-action="Recapitulatif" class="btn btn-primary" style="width: 100%; margin-top: 20px; padding: 15px; font-size: 18px; text-align: center; display: block; text-decoration: none;">
+                        Commander • @Model.MontantTotal.ToString("N0") FCFA
+                    </a>
+
+                    <div style="text-align: center; margin-top: 15px; color: #757575; font-size: 14px;">
+                        <i class="fa-solid fa-lock"></i> Paiement sécurisé
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
