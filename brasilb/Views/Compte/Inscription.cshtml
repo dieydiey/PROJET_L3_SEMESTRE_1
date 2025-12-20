@@ -1,0 +1,73 @@
+@model BrasilBurger.Models.ViewModels.InscriptionViewModel
+@{
+    ViewData["Title"] = "Inscription";
+    Layout = "_Layout";
+}
+
+<div class="auth-container" style="max-width: 600px;">
+    <div class="auth-header">
+        <div class="auth-logo"><i class="fa-solid fa-burger"></i></div>
+        <div class="auth-title">Créer un compte</div>
+        <p style="color: #757575; margin-top: 10px;">Rejoignez Brasil Burger</p>
+    </div>
+
+    <form method="post" asp-action="Inscription">
+        <div asp-validation-summary="ModelOnly" class="alert alert-danger" style="background: #ffebee; color: #c62828; padding: 15px; border-radius: 8px; margin-bottom: 20px;"></div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+            <div class="form-group">
+                <label asp-for="Prenom" class="form-label">Prénom *</label>
+                <input asp-for="Prenom" type="text" class="form-input" placeholder="Amadou" required>
+                <span asp-validation-for="Prenom" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Nom" class="form-label">Nom *</label>
+                <input asp-for="Nom" type="text" class="form-input" placeholder="Diop" required>
+                <span asp-validation-for="Nom" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="Telephone" class="form-label">Téléphone *</label>
+            <input asp-for="Telephone" type="tel" class="form-input" placeholder="77 123 45 67" required>
+            <span asp-validation-for="Telephone" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="Email" class="form-label">Email *</label>
+            <input asp-for="Email" type="email" class="form-input" placeholder="votre@email.com" required>
+            <span asp-validation-for="Email" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="Adresse" class="form-label">Adresse</label>
+            <textarea asp-for="Adresse" class="form-input" placeholder="Votre adresse complète" style="resize: vertical; min-height: 80px;"></textarea>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="MotDePasse" class="form-label">Mot de passe *</label>
+            <input asp-for="MotDePasse" type="password" class="form-input" placeholder="••••••••" required>
+            <span asp-validation-for="MotDePasse" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="ConfirmationMotDePasse" class="form-label">Confirmer le mot de passe *</label>
+            <input asp-for="ConfirmationMotDePasse" type="password" class="form-input" placeholder="••••••••" required>
+            <span asp-validation-for="ConfirmationMotDePasse" class="text-danger"></span>
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="width: 100%; padding: 15px; font-size: 16px; background: #E53935; color: white;">
+            Créer mon compte
+        </button>
+
+        <div class="text-center" style="margin-top: 25px;">
+            <span style="color: #757575;">Vous avez déjà un compte ? </span>
+            <a asp-action="Connexion" class="form-link">Se connecter</a>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
