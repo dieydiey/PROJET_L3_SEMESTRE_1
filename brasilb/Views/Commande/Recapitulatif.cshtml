@@ -1,0 +1,153 @@
+@model BrasilBurger.Models.ViewModels.CommandeViewModel
+@{
+    ViewData["Title"] = "Récapitulatif";
+    Layout = "_Layout";
+}
+
+<div class="container">
+    <h1 style="font-size: 42px; margin-bottom: 40px;">Récapitulatif de votre commande</h1>
+
+    <form method="post" asp-action="Confirmer">
+        <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 30px;">
+            <!-- Résumé du panier -->
+            <div class="cart-container">
+                <h2 style="font-size: 24px; margin-bottom: 20px;">Votre panier</h2>
+                
+                @foreach (var article in Model.Panier.Articles)
+                {
+                    <div class="cart-item" style="border-bottom: 1px solid #f5f5f5; padding: 15px 0;">
+                        <div class="cart-item-image" style="background-image: url('@article.Image'); background-size: cover; background-position: center; width: 60px; height: 60px; "></div>
+                        <div style="flex: 1;">
+                            <strong>@article.Nom</strong>
+                            <p style="color: #757575; font-size: 14px;">Quantité: @article.Quantite</p>
+                        </div>
+                        <span style="font-weight: bold; color: #E53935;">@article.SousTotal.ToString("N0") FCFA</span>
+                    </div>
+                }
+                
+                <div style="display: flex; justify-content: space-between; margin-top: 20px; font-size: 20px; font-weight: bold;">
+                    <span>Sous-total</span>
+                    <strong>@Model.Panier.MontantTotal.ToString("N0") FCFA</strong>
+                </div>
+            </div>
+
+            <!-- Options de commande -->
+            <div class="cart-container">
+                <h2 style="font-size: 24px; margin-bottom: 20px;">Mode de consommation</h2>
+                
+                <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 25px;">
+                    <label style="padding: 15px; border: 2px solid #e0e0e0; border-radius: 10px; cursor: pointer; display: flex; align-items: center; gap: 10px;">
+                        <input type="radio" asp-for="ModeConsommation" value="SurPlace" checked>
+                        <div>
+                            <div style="font-weight: bold;"><i class="fa-solid fa-house-chimney"></i> Sur place</div>
+                            <div style="font-size: 12px; color: #757575;">Consommer au restaurant</div>
+                        </div>
+                    </label>
+
+                    <label style="padding: 15px; border: 2px solid #e0e0e0; border-radius: 10px; cursor: pointer; display: flex; align-items: center; gap: 10px;">
+                        <input type="radio" asp-for="ModeConsommation" value="AEmporter">
+                        <div>
+                            <div style="font-weight: bold;"><i class="fa-solid fa-bag-shopping"></i> À emporter</div>
+                            <div style="font-size: 12px; color: #757575;">Récupérer ma commande</div>
+                        </div>
+                    </label>
+
+                    <label style="padding: 15px; border: 2px solid #e0e0e0; border-radius: 10px; cursor: pointer; display: flex; align-items: center; gap: 10px;" id="livraisonLabel">
+                        <input type="radio" asp-for="ModeConsommation" value="Livraison" id="radioLivraison">
+                        <div>
+                            <div style="font-weight: bold;"><i class="fa-solid fa-truck"></i> Livraison</div>
+                            <div style="font-size: 12px; color: #757575;">Livraison à domicile</div>
+                        </div>
+                    </label>
+                </div>
+
+                <!-- Zone de livraison -->
+                <div id="zoneSection" style="display: none; margin-bottom: 25px; padding: 15px; background: #fff5f5; border-radius: 10px;">
+                    <label style="display: block; font-weight: 600; margin-bottom: 10px;">Zone de livraison</label>
+                    <select asp-for="IdZoneSelectionnee" class="form-input" id="selectZone">
+                        <option value="">Sélectionnez votre zone</option>
+                        @foreach (var zone in Model.Zones)
+                        {
+                            <option value="@zone.IdZone" data-prix="@zone.PrixLivraison">
+                                @zone.Nom - @zone.PrixLivraison.ToString("N0") FCFA
+                            </option>
+                        }
+                    </select>
+                    <input type="text" asp-for="AdresseLivraison" class="form-input" placeholder="Adresse de livraison" style="margin-top: 10px;">
+                    
+                    <div id="fraisLivraison" style="display: none; margin-top: 15px; padding: 10px; background: white; border-radius: 8px;">
+                        <div style="display: flex; justify-content: space-between;">
+                            <span>Frais de livraison</span>
+                            <strong id="prixLivraison">0 FCFA</strong>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="background: #fff5f5; border-radius: 10px; padding: 20px; border: 2px solid #E53935;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                        <span>Sous-total</span>
+                        <span style="font-weight: bold;">@Model.Panier.MontantTotal.ToString("N0") FCFA</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid #e0e0e0;" id="fraisLine" style="display: none;">
+                        <span>Frais de livraison</span>
+                        <span style="font-weight: bold;" id="fraisDisplay">0 FCFA</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; font-size: 24px; font-weight: bold; color: #E53935;">
+                        <span>TOTAL</span>
+                        <span id="montantTotal">@Model.Panier.MontantTotal.ToString("N0") FCFA</span>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 20px; padding: 15px; font-size: 18px; background: #E53935; color: white;">
+                    Commander
+                </button>
+            </div>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+<script>
+const sousTotal = @Model.Panier.MontantTotal;
+const radioLivraison = document.getElementById('radioLivraison');
+const zoneSection = document.getElementById('zoneSection');
+const selectZone = document.getElementById('selectZone');
+
+document.querySelectorAll('input[name="ModeConsommation"]').forEach(radio => {
+    radio.addEventListener('change', function() {
+        if (this.value === 'Livraison') {
+            zoneSection.style.display = 'block';
+        } else {
+            zoneSection.style.display = 'none';
+            mettreAJourTotal(0);
+        }
+    });
+});
+
+selectZone.addEventListener('change', function() {
+    const selectedOption = this.options[this.selectedIndex];
+    const prixLivraison = parseFloat(selectedOption.dataset.prix) || 0;
+    
+    if (prixLivraison > 0) {
+        document.getElementById('fraisLivraison').style.display = 'block';
+        document.getElementById('prixLivraison').textContent = prixLivraison.toLocaleString('fr-FR') + ' FCFA';
+        mettreAJourTotal(prixLivraison);
+    } else {
+        document.getElementById('fraisLivraison').style.display = 'none';
+        mettreAJourTotal(0);
+    }
+});
+
+function mettreAJourTotal(frais) {
+    const total = sousTotal + frais;
+    document.getElementById('montantTotal').textContent = total.toLocaleString('fr-FR') + ' FCFA';
+    
+    if (frais > 0) {
+        document.getElementById('fraisLine').style.display = 'flex';
+        document.getElementById('fraisDisplay').textContent = frais.toLocaleString('fr-FR') + ' FCFA';
+    } else {
+        document.getElementById('fraisLine').style.display = 'none';
+    }
+}
+</script>
+}

@@ -1,0 +1,121 @@
+@model BrasilBurger.Models.Commande
+@{
+    ViewData["Title"] = "Confirmation";
+    Layout = "_Layout";
+}
+
+<div class="container">
+    <div style="max-width: 800px; margin: 0 auto;">
+        <div class="cart-container" style="text-align: center;">
+            <!-- Icône de succès -->
+            <div style="font-size: 100px; margin-bottom: 20px;">✅</div>
+            
+            <h1 style="font-size: 36px; margin-bottom: 15px; color: #4CAF50;">Commande confirmée !</h1>
+            <p style="color: #757575; font-size: 18px; margin-bottom: 40px;">
+                Votre commande a été enregistrée avec succès
+            </p>
+
+            <!-- Détails de la commande -->
+            <div style="background: #f5f5f5; padding: 30px; border-radius: 15px; margin-bottom: 30px; text-align: left;">
+                <h2 style="font-size: 24px; margin-bottom: 20px; text-align: center;">Détails de votre commande</h2>
+                
+                <div style="display: grid; gap: 15px;">
+                    <div style="display: flex; justify-content: space-between; padding: 15px; background: white; border-radius: 8px;">
+                        <span style="color: #757575;">Numéro de commande</span>
+                        <strong style="font-size: 18px;">#@Model.NumeroCommande</strong>
+                    </div>
+
+                    <div style="display: flex; justify-content: space-between; padding: 15px; background: white; border-radius: 8px;">
+                        <span style="color: #757575;">Date et heure</span>
+                        <strong>@Model.DateCommande.ToString("dd/MM/yyyy à HH:mm")</strong>
+                    </div>
+
+                    <div style="display: flex; justify-content: space-between; padding: 15px; background: white; border-radius: 8px;">
+                        <span style="color: #757575;">Mode de consommation</span>
+                        <strong>
+                            @if (Model.ModeConsommation == BrasilBurger.Models.ModeConsommation.sur_place)
+                            {
+                                <span><i class="fa-solid fa-house-chimney"></i> Sur place</span>
+                            }
+                            else if (Model.ModeConsommation == BrasilBurger.Models.ModeConsommation.a_emporte)
+                            {
+                                <span><i class="fa-solid fa-bag-shopping"></i> À emporter</span>
+                            }
+                            else
+                            {
+                                <span><i class="fa-solid fa-truck"></i> Livraison</span>
+                            }
+                        </strong>
+                    </div>
+
+                    <div style="display: flex; justify-content: space-between; padding: 15px; background: white; border-radius: 8px;">
+                        <span style="color: #757575;">Statut</span>
+                        <span class="status-badge status-progress">@Model.Etat</span>
+                    </div>
+
+                    <div style="display: flex; justify-content: space-between; padding: 20px; background: #fff5f5; border-radius: 8px; border: 2px solid #E53935;">
+                        <span style="font-size: 20px; font-weight: bold;">Montant total</span>
+                        <span style="font-size: 24px; font-weight: bold; color: #E53935;">@Model.MontantTotal.ToString("N0") FCFA</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Articles commandés -->
+            @if (Model.LignesCommande != null && Model.LignesCommande.Any())
+            {
+                <div style="background: #f5f5f5; padding: 30px; border-radius: 15px; margin-bottom: 30px; text-align: left;">
+                    <h3 style="font-size: 20px; margin-bottom: 20px; text-align: center;">Articles commandés</h3>
+                    
+                    @foreach (var ligne in Model.LignesCommande)
+                    {
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px; background: white; border-radius: 8px; margin-bottom: 10px;">
+                            <div style="display: flex; align-items: center; gap: 15px;">
+                                <div style="background-image: url('@(ligne.Burger?.Image ?? ligne.Menu?.Image ?? ligne.Complement?.Image)'); background-size: cover; background-position: center; font-size: 30px; width: 60px; height: 60px; border-radius: 8px;">
+                                    
+                                </div>
+                                <div>
+                                    <div style="font-weight: bold;">
+                                        @(ligne.Burger?.Nom ?? ligne.Menu?.Nom ?? ligne.Complement?.Nom)
+                                    </div>
+                                    <div style="color: #757575; font-size: 14px;">Quantité: @ligne.Quantite</div>
+                                </div>
+                            </div>
+                            <div style="font-weight: bold; color: #E53935;">@ligne.SousTotal.ToString("N0") FCFA</div>
+                        </div>
+                    }
+                </div>
+            }
+
+            <!-- Actions -->
+            <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
+                <a asp-action="MesCommandes" class="btn btn-primary" style="padding: 15px 40px;">
+                    <i class="fa-solid fa-boxes-stacked" style="color: #0f0f10;"></i> Voir mes commandes
+                </a>
+                <a asp-controller="Catalogue" asp-action="Index" class="btn btn-secondary" style="padding: 15px 40px;">
+                    <i class="fa-solid fa-burger-fries" style="color: #f9fafa;"></i> Retour au catalogue
+                </a>
+            </div>
+
+            <!-- Message d'information -->
+            <div style="margin-top: 40px; padding: 20px; background: #E3F2FD; border-radius: 10px; border-left: 4px solid #2196F3;">
+                <p style="color: #1976D2; margin: 0;">
+                    @if (Model.ModeConsommation == BrasilBurger.Models.ModeConsommation.livraison)
+                    {
+                        <strong><i class="fa-notdog-duo fa-solid fa-truck mdc"> Livraison en cours</strong><br />
+                        <span>Votre commande sera livrée dans les plus brefs délais. Vous recevrez une notification lorsqu'elle sera en route.</span>
+                    }
+                    else if (Model.ModeConsommation == BrasilBurger.Models.ModeConsommation.a_emporte)
+                    {
+                        <strong><i class="fa-notdog-duo fa-solid fa-bag-shopping mdc"> À récupérer</strong><br />
+                        <span>Votre commande sera prête sous 15-20 minutes. Présentez-vous au comptoir avec votre numéro de commande.</span>
+                    }
+                    else
+                    {
+                        <strong><i class="fa-solid fa-house-cheminey"> Sur place</strong><br />
+                        <span>Votre commande est en préparation. Elle vous sera servie dans quelques instants.</span>
+                    }
+                </p>
+            </div>
+        </div>
+    </div>
+</div>

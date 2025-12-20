@@ -24,12 +24,20 @@ build_property.EnableCodeStyleSeverity =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ2F0YWxvZ3VlXEluZGV4LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
+[C:/Users/Dieynaba/OneDrive/Desktop/PROJET_L3_SEMESTRE_1/brasilb/Views/Commande/Confirmation.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ29tbWFuZGVcQ29uZmlybWF0aW9uLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
 [C:/Users/Dieynaba/OneDrive/Desktop/PROJET_L3_SEMESTRE_1/brasilb/Views/Commande/Detail.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ29tbWFuZGVcRGV0YWlsLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/Dieynaba/OneDrive/Desktop/PROJET_L3_SEMESTRE_1/brasilb/Views/Commande/MesCommandes.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ29tbWFuZGVcTWVzQ29tbWFuZGVzLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Dieynaba/OneDrive/Desktop/PROJET_L3_SEMESTRE_1/brasilb/Views/Commande/Recapitulatif.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ29tbWFuZGVcUmVjYXBpdHVsYXRpZi5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/Dieynaba/OneDrive/Desktop/PROJET_L3_SEMESTRE_1/brasilb/Views/Home/Index.cshtml]
