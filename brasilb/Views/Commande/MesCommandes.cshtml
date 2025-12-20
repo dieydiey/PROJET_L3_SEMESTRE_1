@@ -1,0 +1,93 @@
+@model BrasilBurger.Models.ViewModels.SuiviCommandeViewModel
+@{
+    ViewData["Title"] = "Mes Commandes";
+    Layout = "_Layout";
+}
+
+<div class="container">
+    <h1 style="font-size: 42px; margin-bottom: 15px;"><i class="fa-solid fa-boxes-stacked"></i> Mes Commandes</h1>
+    
+
+    @if (!Model.Commandes.Any())
+    {
+        <div style="text-align: center; padding: 60px 20px; background: white; border-radius: 15px;">
+            <div style="font-size: 80px; margin-bottom: 20px;"><i class="fa-duotone fa-thin fa-boxes-stacked"></i></div>
+            <h2 style="margin-bottom: 15px;">Aucune commande</h2>
+            <p style="color: #757575; margin-bottom: 30px;">Vous n'avez pas encore passé de commande</p>
+            <a asp-controller="Catalogue" asp-action="Index" class="btn btn-primary" style="padding: 15px 40px;">
+                Découvrir le catalogue
+            </a>
+        </div>
+    }
+    else
+    {
+        <div class="orders-grid">
+            @foreach (var commande in Model.Commandes)
+            {
+                <div class="order-card">
+                    <div class="order-header">
+                        <div class="order-number">#@commande.NumeroCommande</div>
+                        @{
+                            var statusClass = commande.Etat switch
+                            {
+                                BrasilBurger.Models.EtatCommande.EnAttente => "status-pending",
+                                BrasilBurger.Models.EtatCommande.EnCours => "status-progress",
+                                BrasilBurger.Models.EtatCommande.Prete => "status-ready",
+                                BrasilBurger.Models.EtatCommande.Terminee => "status-completed",
+                                BrasilBurger.Models.EtatCommande.Annulee => "status-cancelled",
+                                _ => "status-pending"
+                            };
+                            
+                            var statusText = commande.Etat switch
+                            {
+                                BrasilBurger.Models.EtatCommande.EnAttente => "En attente",
+                                BrasilBurger.Models.EtatCommande.EnCours => "En cours",
+                                BrasilBurger.Models.EtatCommande.Prete => "Prête",
+                                BrasilBurger.Models.EtatCommande.Terminee => "Terminée",
+                                BrasilBurger.Models.EtatCommande.Annulee => "Annulée",
+                                _ => "En attente"
+                            };
+                        }
+                        <span class="status-badge @statusClass">@statusText</span>
+                    </div>
+                    <div class="order-body">
+                        <div class="order-info-item">
+                            <div class="order-info-label">Date & Heure</div>
+                            <div class="order-info-value">@commande.DateCommande.ToString("dd MMM yyyy, HH:mm")</div>
+                        </div>
+                        <div class="order-info-item">
+                            <div class="order-info-label">Mode</div>
+                            <div class="order-info-value">
+                                @if (commande.ModeConsommation == BrasilBurger.Models.ModeConsommation.sur_place)
+                                {
+                                    <span><i class="fa-solid fa-house-chimney"></i> Sur place</span>
+                                }
+                                else if (commande.ModeConsommation == BrasilBurger.Models.ModeConsommation.a_emporte)
+                                {
+                                    <span><i class="fa-solid fa-bag-shopping"></i> À emporter</span>
+                                }
+                                else
+                                {
+                                    <span><i class="fa-solid fa-truck"></i> Livraison</span>
+                                }
+                            </div>
+                        </div>
+                        <div class="order-info-item">
+                            <div class="order-info-label">Montant Total</div>
+                            <div class="order-info-value" style="color: #E53935;">@commande.MontantTotal.ToString("N0") FCFA</div>
+                        </div>
+                    </div>
+                    <div class="order-actions">
+                        <a asp-action="Detail" asp-route-idCommande="@commande.IdCommande" class="btn btn-primary" style="flex: 1;">
+                            Voir les détails
+                        </a>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>
+
+<style>
+.status-cancelled { background: #FFCDD2; color: #C62828; }
+</style>
