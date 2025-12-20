@@ -1,0 +1,228 @@
+@model BrasilBurger.Models.Commande
+@{
+    ViewData["Title"] = "Détail Commande";
+    Layout = "_Layout";
+}
+
+<div class="container">
+    <a asp-action="MesCommandes" class="btn btn-secondary" style="margin-bottom: 30px;">← Retour à mes commandes</a>
+
+    <div class="order-detail-container">
+        <div class="order-detail-header">
+            <div>
+                <h1 style="font-size: 36px; margin-bottom: 10px;">Commande #@Model.NumeroCommande</h1>
+                <p style="color: #757575;">Passée le @Model.DateCommande.ToString("dd MMMM yyyy à HH:mm")</p>
+            </div>
+            @{
+                var statusClass = Model.Etat switch
+                {
+                    BrasilBurger.Models.EtatCommande.EnAttente => "status-pending",
+                    BrasilBurger.Models.EtatCommande.EnCours => "status-progress",
+                    BrasilBurger.Models.EtatCommande.Prete => "status-ready",
+                    BrasilBurger.Models.EtatCommande.Terminee => "status-completed",
+                    _ => "status-pending"
+                };
+                
+                var statusText = Model.Etat switch
+                {
+                    BrasilBurger.Models.EtatCommande.EnAttente => "En attente",
+                    BrasilBurger.Models.EtatCommande.EnCours => "En cours",
+                    BrasilBurger.Models.EtatCommande.Prete => "Prête",
+                    BrasilBurger.Models.EtatCommande.Terminee => "Terminée",
+                    _ => "En attente"
+                };
+            }
+            <span class="status-badge @statusClass" style="font-size: 16px; padding: 10px 20px;">@statusText</span>
+        </div>
+
+        <!-- Progress Bar -->
+        
+        
+
+        <!-- Products List -->
+        <div class="products-list-detail">
+            <h2 class="section-title">Produits commandés</h2>
+            
+            <div style="background: #f5f5f5; border-radius: 10px; padding: 20px;">
+                <table id="produitsTable" class="table table-borderless align-middle">
+                    <thead style="border-bottom: 2px solid #e0e0e0;">
+                        <tr>
+                            <th style="width: 90px;">Image</th>
+                            <th>Produit</th>
+                            <th class="text-center">Quantité</th>
+                            <th class="text-end">Prix unitaire</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var ligne in Model.LignesCommande!)
+                        {
+                            <tr>
+                                <td>
+                                    <div style="width: 70px; height: 70px; 
+                                                border-radius: 5px; display: flex; ">
+                                        @if (ligne.Burger?.Image != null)
+                                        {
+                                            <img src="@ligne.Burger.Image" style="width: 100%;" />
+                                        }
+                                        else if (ligne.Menu?.Image != null)
+                                        {
+                                            <img src="@ligne.Menu.Image" style="width: 100%;" />
+                                        }
+                                        else
+                                        {
+                                            <span style="font-size: 30px;">🟢</span>
+                                        }
+                                    </div>
+                                </td>
+                                <td style="font-weight: bold;">
+                                    @(ligne.Burger?.Nom ?? ligne.Menu?.Nom ?? ligne.Complement?.Nom)
+                                </td>
+                                <td class="text-center fw-bold">
+                                    × @ligne.Quantite
+                                </td>
+                                <td class="text-end fw-bold">
+                                    @ligne.PrixUnitaire.ToString("N0") FCFA
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+
+        <!-- Order Info Grid -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-top: 40px;">
+            <!-- Delivery/Pickup Info -->
+            <div>
+                <h2 class="section-title">
+                    @if (Model.ModeConsommation == BrasilBurger.Models.ModeConsommation.livraison)
+                    {
+                        <span>Informations de livraison</span>
+                    }
+                    else if (Model.ModeConsommation == BrasilBurger.Models.ModeConsommation.a_emporte)
+                    {
+                        <span>Informations de retrait</span>
+                    }
+                    else
+                    {
+                        <span>Informations</span>
+                    }
+                </h2>
+                <div style="background: #f5f5f5; border-radius: 10px; padding: 20px;">
+                    <div style="margin-bottom: 15px;">
+                        <div style="color: #757575; font-size: 14px; margin-bottom: 5px;">Mode de consommation</div>
+                        <div style="font-weight: bold; font-size: 16px;">
+                            @if (Model.ModeConsommation == BrasilBurger.Models.ModeConsommation.sur_place)
+                            {
+                                <span>Sur place</span>
+                            }
+                            else if (Model.ModeConsommation == BrasilBurger.Models.ModeConsommation.a_emporte)
+                            {
+                                <span>À emporter</span>
+                            }
+                            else
+                            {
+                                <span>Livraison</span>
+                            }
+                        </div>
+                    </div>
+                    
+                    @if (Model.Client != null)
+                    {
+                        <div style="margin-bottom: 15px;">
+                            <div style="color: #757575; font-size: 14px; margin-bottom: 5px;">Client</div>
+                            <div style="font-weight: 500;">@Model.Client.Prenom @Model.Client.Nom</div>
+                            <div style="color: #757575; font-size: 14px;"> @Model.Client.Telephone</div>
+                        </div>
+                    }
+                    
+                    @if (Model.ModeConsommation == BrasilBurger.Models.ModeConsommation.livraison && Model.Client?.Adresse != null)
+                    {
+                        <div style="margin-bottom: 15px;">
+                            <div style="color: #757575; font-size: 14px; margin-bottom: 5px;">Adresse</div>
+                            <div style="font-weight: 500;">@Model.Client.Adresse</div>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <!-- Payment Info -->
+            <div>
+                <h2 class="section-title"> Informations de paiement</h2>
+                <div style="background: #f5f5f5; border-radius: 10px; padding: 20px;">
+                    @if (Model.Paiement != null)
+                    {
+                        <div style="margin-bottom: 15px;">
+                            <div style="color: #757575; font-size: 14px; margin-bottom: 5px;">Méthode de paiement</div>
+                            <div style="font-weight: bold; font-size: 16px;">
+                                @if (Model.Paiement.Methode == BrasilBurger.Models.MethodePaiement.wave)
+                                {
+                                    <span> Wave</span>
+                                }
+                                else
+                                {
+                                    <span> Orange Money</span>
+                                }
+                            </div>
+                        </div>
+                        <div style="margin-bottom: 15px;">
+                            <div style="color: #757575; font-size: 14px; margin-bottom: 5px;">Statut</div>
+                            <span class="status-badge status-ready">@Model.Paiement.Statut</span>
+                        </div>
+                        <div style="margin-bottom: 15px;">
+                            <div style="color: #757575; font-size: 14px; margin-bottom: 5px;">Date de paiement</div>
+                            <div style="font-weight: 500;">@Model.Paiement.DatePaiement.ToString("dd/MM/yyyy - HH:mm")</div>
+                        </div>
+                        @if (!string.IsNullOrEmpty(Model.Paiement.ReferenceTransaction))
+                        {
+                            <div style="margin-bottom: 15px;">
+                                <div style="color: #757575; font-size: 14px; margin-bottom: 5px;">Référence transaction</div>
+                                <div style="font-family: monospace; font-size: 13px;">@Model.Paiement.ReferenceTransaction</div>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <div style="padding: 20px; text-align: center; color: #757575;">
+                            Paiement en attente
+                        </div>
+                    }
+                </div>
+
+                <!-- Total -->
+                <div style="background: #fff5f5; border-radius: 10px; padding: 20px; margin-top: 20px; border: 2px solid #E53935;">
+                    <div style="display: flex; justify-content: space-between; font-size: 24px; font-weight: bold; color: #E53935;">
+                        <span>TOTAL</span>
+                        <span>@Model.MontantTotal.ToString("N0") FCFA</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Actions -->
+        <div style="display: flex; gap: 15px; margin-top: 40px; justify-content: center;">
+            <button class="btn btn-primary" style="padding: 15px 40px;" onclick="location.reload()">🔄 Actualiser l'état</button>
+            <a asp-action="MesCommandes" class="btn btn-secondary" style="padding: 15px 40px;">📦 Mes commandes</a>
+        </div>
+    </div>
+</div>
+@section Scripts {  
+    <script>
+        $(document).ready(function () {
+            $('#produitsTable').DataTable({
+                pageLength: 5,
+                lengthChange: false,
+                searching: false,
+                info: false,
+                ordering: false,
+                language: {
+                    paginate: {
+                        previous: "←",
+                        next: "→"
+                    }
+                }
+            });
+        });
+    </script>
+}
