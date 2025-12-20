@@ -1,0 +1,154 @@
+@model BrasilBurger.Models.ViewModels.DetailProduitViewModel
+@{
+    ViewData["Title"] = Model.Burger.Nom;
+    Layout = "_Layout";
+}
+
+<div class="container">
+    <a asp-controller="Catalogue" asp-action="Index" class="btn btn-secondary" style="margin-bottom: 30px;">← Retour au catalogue</a>
+
+    <div class="product-detail">
+        <div>
+            @if (!string.IsNullOrEmpty(Model.Burger.Image))
+            {
+                <div class="product-detail-image" style="background-image: url('@Model.Burger.Image'); background-size: cover; background-position: center;"></div>
+            }
+            else
+            {
+                <div class="product-detail-image">🍔</div>
+            }
+        </div>
+
+        <div class="product-detail-content">
+            <h1>@Model.Burger.Nom</h1>
+            <p style="color: #757575; font-size: 18px; line-height: 1.6;">
+                Notre délicieux burger classique composé d'un steak haché de qualité, 
+                de salade fraîche, de tomates juteuses, d'oignons croquants et de notre 
+                sauce maison secrète. Servi dans un pain artisanal fraîchement cuit.
+            </p>
+
+            <div class="product-detail-price">@Model.Burger.Prix.ToString("N0") FCFA</div>
+
+            <!-- Compléments -->
+            @if (Model.ComplementsDisponibles.Any())
+            {
+                <div class="complements-section">
+                    <div class="complements-title">🟢 Ajouter des compléments</div>
+                    
+                    @foreach (var complement in Model.ComplementsDisponibles)
+                    {
+                        <div class="complement-item">
+                            <div>
+                                <div class="product-image" style="background-image: url('@complement.Image'); background-size: cover; background-position: center; width: 70px; height: 70px;"></div>
+                                <div style="font-weight: bold;">@complement.Nom</div>
+                                <div style="color: #757575; font-size: 14px;">+@complement.Prix.ToString("N0") FCFA</div>
+                            </div>
+                            <input type="checkbox" class="complement-checkbox" name="complements" value="@complement.IdComplement" data-prix="@complement.Prix">
+                        </div>
+                    }
+                </div>
+            }
+
+            <!-- Quantité -->
+            <div>
+                <div style="font-weight: bold; margin-bottom: 15px; font-size: 18px;">Quantité</div>
+                <div class="quantity-selector">
+                    <button type="button" class="qty-btn" onclick="changerQuantite(-1)">−</button>
+                    <div class="qty-number" id="quantite">1</div>
+                    <button type="button" class="qty-btn" onclick="changerQuantite(1)">+</button>
+                </div>
+            </div>
+
+            <!-- Actions -->
+            <div style="display: flex; gap: 15px; margin-top: 30px;">
+                <button type="button" class="btn btn-primary" style="flex: 1; padding: 15px; font-size: 18px;" onclick="ajouterAuPanier()">
+                    🛒 Ajouter au panier • <span id="prixTotal">@Model.Burger.Prix.ToString("N0")</span> FCFA
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        let quantite = 1;
+        // On force le format US (point) pour éviter les erreurs JS avec la virgule française
+        const prixBase = parseFloat("@Model.Burger.Prix.ToString(System.Globalization.CultureInfo.InvariantCulture)");
+        const burgerId = @Model.Burger.IdBurger;
+        const burgerNom = "@Html.Raw(Model.Burger.Nom)";
+        const burgerImage = "@Model.Burger.Image";
+
+        function changerQuantite(delta) {
+            quantite = Math.max(1, quantite + delta);
+            const qtyElement = document.getElementById('quantite');
+            if(qtyElement) qtyElement.textContent = quantite;
+            mettreAJourPrix();
+        }
+
+        function mettreAJourPrix() {
+            const checkboxes = document.querySelectorAll('input[name="complements"]:checked');
+            let prixComplements = 0;
+            
+            checkboxes.forEach(cb => {
+                prixComplements += parseFloat(cb.dataset.prix.replace(',', '.'));
+            });
+            
+            const prixTotal = (prixBase + prixComplements) * quantite;
+            const totalSpan = document.getElementById('prixTotal');
+            if(totalSpan) {
+                totalSpan.textContent = prixTotal.toLocaleString('fr-FR');
+            }
+        }
+
+        // On attache l'événement proprement
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('input[name="complements"]').forEach(cb => {
+                cb.addEventListener('change', mettreAJourPrix);
+            });
+        });
+
+
+        function ajouterAuPanier() {
+            const complementsSelectionnes = Array.from(document.querySelectorAll('input[name="complements"]:checked'))
+                .map(cb => ({
+                    id: parseInt(cb.value),
+                    // On récupère le nom via un sélecteur plus précis
+                    nom: cb.closest('.complement-item').querySelector('div[style*="bold"]').textContent.trim(),
+                    prix: parseFloat(cb.dataset.prix)
+                }));
+
+            const data = {
+                type: 'burger',
+                id: burgerId,
+                nom: burgerNom,
+                prix: prixBase,
+                quantite: quantite,
+                image: burgerImage,
+                complements: complementsSelectionnes // Toujours envoyer une liste, même vide
+            };
+
+            console.log("Données envoyées :", data); // Pour déboguer
+
+            fetch('/Produit/AjouterAuPanier', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            })
+            .then(response => {
+                if (!response.ok) throw new Error('Erreur réseau');
+                return response.json();
+            })
+            .then(result => {
+                if (result.success) {
+                    alert('✅ Produit ajouté au panier !');
+                    window.location.href = '/Panier';
+                }
+            })
+            .catch(error => {
+                console.error('Erreur:', error);
+                alert('❌ Erreur lors de l\'ajout au panier');
+            });
+        }
+    </script>
+}
+

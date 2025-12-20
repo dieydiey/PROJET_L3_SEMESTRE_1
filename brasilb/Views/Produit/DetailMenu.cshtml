@@ -1,0 +1,132 @@
+@model BrasilBurger.Models.ViewModels.DetailProduitViewModel
+
+@{
+    ViewData["Title"] = Model.Menu?.Nom ?? "Détail Menu";
+    Layout = "_Layout";
+}
+
+<div class="container">
+    <a asp-controller="Catalogue" asp-action="Index" class="btn btn-secondary" style="margin-bottom: 30px;">
+        ← Retour au catalogue
+    </a>
+
+    <div class="product-detail">
+        <div>
+            <div class="product-detail-image"
+                 style="background-image: url('@Model.Menu?.Image');
+                        background-size: cover;
+                        background-position: center;">
+            </div>
+        </div>
+
+        <div class="product-detail-content">
+            <h1>@Model.Menu?.Nom</h1>
+
+            <p style="color: #757575; font-size: 18px; line-height: 1.6;">
+                Menu complet comprenant tous nos meilleurs produits pour un repas savoureux.
+            </p>
+
+            <div class="product-detail-price">
+                <span id="prixUnitaireDisplay">@Model.Menu?.PrixTotal.ToString("N0")</span> FCFA
+            </div>
+
+            @if (Model.Menu?.Compositions != null && Model.Menu.Compositions.Any())
+            {
+                <div class="complements-section">
+                    <div class="complements-title">📋 Ce menu contient :</div>
+                    @foreach (var composition in Model.Menu.Compositions)
+                    {
+                        <div class="complement-item">
+                            <div style="display: flex; align-items: center; gap: 15px;">
+                                @if (composition.Burger != null)
+                                {
+                                    <div class="product-image" style="background-image: url('@composition.Burger.Image'); background-size: cover; width: 50px; height: 50px; border-radius: 8px;"></div>
+                                    <div>
+                                        <div style="font-weight: bold;">@composition.Burger.Nom</div>
+                                        <div style="color: #757575; font-size: 12px;">Quantité : @composition.Quantite</div>
+                                    </div>
+                                }
+                                else if (composition.Complement != null)
+                                {
+                                    <div class="product-image" style="background-image: url('@composition.Complement.Image'); background-size: cover; width: 50px; height: 50px; border-radius: 8px;"></div>
+                                    <div>
+                                        <div style="font-weight: bold;">@composition.Complement.Nom</div>
+                                        <div style="color: #757575; font-size: 12px;">Quantité : @composition.Quantite</div>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+
+            <div style="margin-top: 20px;">
+                <div style="font-weight: bold; margin-bottom: 15px; font-size: 18px;">Quantité</div>
+                <div class="quantity-selector">
+                    <button type="button" class="qty-btn" onclick="changerQuantite(-1)">−</button>
+                    <div class="qty-number" id="quantite">1</div>
+                    <button type="button" class="qty-btn" onclick="changerQuantite(1)">+</button>
+                </div>
+            </div>
+
+            <div style="display: flex; gap: 15px; margin-top: 30px;">
+                <button type="button" class="btn btn-primary" style="flex: 1; padding: 15px; font-size: 18px;" onclick="ajouterAuPanier()">
+                    🛒 Ajouter au panier • <span id="prixTotal">@Model.Menu?.PrixTotal.ToString("N0")</span> FCFA
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+    let quantite = 1;
+    // Utilisation de InvariantCulture pour garantir le point décimal en JS
+    const prixBase = parseFloat("@(Model.Menu?.PrixTotal.ToString(System.Globalization.CultureInfo.InvariantCulture) ?? "0")");
+
+    function changerQuantite(delta) {
+        quantite = Math.max(1, quantite + delta);
+        const qtyDisplay = document.getElementById('quantite');
+        if (qtyDisplay) qtyDisplay.textContent = quantite;
+        mettreAJourPrix();
+    }
+
+    function mettreAJourPrix() {
+        const total = prixBase * quantite;
+        const totalDisplay = document.getElementById('prixTotal');
+        if (totalDisplay) {
+            totalDisplay.textContent = total.toLocaleString('fr-FR');
+        }
+    }
+
+    function ajouterAuPanier() {
+        const data = {
+            type: 'menu',
+            id: @(Model.Menu?.IdMenu ?? 0),
+            nom: '@Html.Raw(Model.Menu?.Nom)',
+            prix: prixBase,
+            quantite: quantite,
+            image: '@Model.Menu?.Image',
+            complements: [] // Un menu n'a pas de compléments optionnels ici
+        };
+
+        fetch('/Produit/AjouterAuPanier', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        })
+        .then(res => res.json())
+        .then(result => {
+            if (result.success) {
+                window.location.href = '/Panier';
+            } else {
+                alert("Erreur : " + result.message);
+            }
+        })
+        .catch(err => {
+            console.error(err);
+            alert("❌ Erreur de connexion au serveur");
+        });
+    }
+</script>
+}
