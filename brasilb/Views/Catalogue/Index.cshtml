@@ -1,0 +1,117 @@
+@model BrasilBurger.Models.ViewModels.CatalogueViewModel
+@{
+    ViewData["Title"] = "Catalogue";
+    Layout = "_Layout";
+}
+
+<div class="container">
+    <h1 style="font-size: 42px; margin-bottom: 15px;">Notre Catalogue</h1>
+
+    <!-- Filtres -->
+    <div class="filters">
+        <a asp-action="Index" class="filter-btn @(Model.FiltreType == null ? "active" : "")">
+            <i class="fa-solid fa-plate-utensils"></i> Tous (@(Model.Burgers.Count + Model.Menus.Count))
+        </a>
+        <a asp-action="Index" asp-route-filtre="burger" class="filter-btn @(Model.FiltreType == "burger" ? "active" : "")">
+            <i class="fa-solid fa-burger-cheese"></i> Burgers (@Model.Burgers.Count)
+        </a>
+        <a asp-action="Index" asp-route-filtre="menu" class="filter-btn @(Model.FiltreType == "menu" ? "active" : "")">
+            <i class="fa-solid fa-list-tree"></i> Menus (@Model.Menus.Count)
+        </a>
+    </div>
+
+    <!-- Burgers -->
+    @if (Model.Burgers.Any())
+    {
+        <div class="products-grid">
+            @foreach (var burger in Model.Burgers)
+            {
+                <div class="product-card">
+                    @if (!string.IsNullOrEmpty(burger.Image))
+                    {
+                        <div class="product-image" style="background-image: url('@burger.Image'); background-size: cover; background-position: center;"></div>
+                    }
+                    else
+                    {
+                        <div class="product-image"><i class="fa-duotone fa-solid fa-burger"></i></div>
+                    }
+                    <div class="product-info">
+                        <div class="name-price-row">
+                            <div class="product-name">@burger.Nom</div>
+                            <div class="product-price">@burger.Prix.ToString("N0") FCFA</div>
+                        </div>
+                        <div class="product-description">Steak haché, salade, tomate, oignon, sauce maison</div>
+                        <div class="product-footer">
+                            <a asp-controller="Produit" asp-action="DetailBurger" asp-route-id="@burger.IdBurger" class="add-to-cart-btn">Détails</a>
+                            <button class="add-to-cart-btn" onclick="ajouterRapide('burger', @burger.IdBurger, '@burger.Nom', @burger.Prix, '@burger.Image')">+ Ajouter</button>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+
+    <!-- Menus -->
+    @if (Model.Menus.Any())
+    {
+        
+        <div class="products-grid">
+            @foreach (var menu in Model.Menus)
+            {
+                <div class="product-card">
+                    @if (!string.IsNullOrEmpty(menu.Image))
+                    {
+                        <div class="product-image" style="background-image: url('@menu.Image'); background-size: cover; background-position: center;"></div>
+                    }
+                    else
+                    {
+                        <div class="product-image"><i class="fa-solid fa-list-tree"></i></div>
+                    }
+                    <div class="product-info">
+                        <div class="name-price-row">
+                            <div class="product-name">@menu.Nom</div>
+                            <div class="product-price">@menu.PrixTotal.ToString("N0") FCFA</div>
+                        </div>
+                        <div class="product-description">Menu complet avec burger, frites et boisson</div>
+                        <div class="product-footer">
+                            <a asp-controller="Produit" asp-action="DetailMenu" asp-route-id="@menu.IdMenu" class="add-to-cart-btn">Détails</a>
+                            <button class="add-to-cart-btn" onclick="ajouterRapide('menu', @menu.IdMenu, '@menu.Nom', @menu.PrixTotal, '@menu.Image')">+ Ajouter</button>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>
+
+@section Scripts {
+<script>
+function ajouterRapide(type, id, nom, prix, image) {
+    const data = {
+        type: type,
+        id: id,
+        nom: nom,
+        prix: prix,
+        quantite: 1,
+        image: image
+    };
+
+    fetch('/Produit/AjouterAuPanier', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+    })
+    .then(response => response.json())
+    .then(result => {
+        if (result.success) {
+            alert('✅ Produit ajouté au panier !');
+            location.reload(); // Rafraîchir pour mettre à jour le badge du panier
+        }
+    })
+    .catch(error => {
+        console.error('Erreur:', error);
+        alert('❌ Erreur lors de l\'ajout au panier');
+    });
+}
+</script>
+}
