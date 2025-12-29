@@ -1,0 +1,186 @@
+{% extends 'base.html.twig' %}
+
+{% block page_title %}
+    <span class="d-inline-flex align-items-center justify-content-center bg-danger-soft rounded-circle me-2" style="width: 35px; height: 35px;">
+        <i class="bi bi-receipt text-danger fs-5"></i>
+    </span>
+    Gestion des Commandes
+{% endblock %}
+
+
+
+{% block body %}
+<div class="container-fluid ">
+    {# En-tête #}
+    
+
+    <div class="content-area">
+        {# Section Filtres #}
+        <div class="filters-bar">
+            <form method="get" action="{{ path('commande_index') }}">
+                <div class="filters-grid">
+                    <div class="form-group">
+                        <label class="form-label">Statut</label>
+                        <select name="etat" class="form-select">
+                            <option value="">Tous les états</option>
+                            {% set etats = {
+                                'en_attente': 'En attente',
+                                'en_cours': 'En cours',
+                                'prete': 'Prête',
+                                'terminee': 'Terminée',
+                                'annulee': 'Annulée'
+                            } %}
+                            {% for key, label in etats %}
+                                <option value="{{ key }}" {{ filtre.etat == key ? 'selected' : '' }}>
+                                    {{ label }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Période</label>
+                        <div class="input-group">
+                            <input type="date" name="date" value="{{ app.request.query.get('date') }}" class="form-control">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Nom Client</label>
+                        <input type="text" name="nomClient" class="form-input" value="{{ filtre.nomClient ?? '' }}" placeholder="Ex: Jean Dupont">
+                    </div>
+                    <div class="form-group" style="display: flex; gap: 8px;">
+                        <button type="submit" class="btn btn-primary" style="flex: 1;width:20px;">
+                            🔍 Filtrer
+                        </button>
+                        <a href="{{ path('commande_index') }}" class="btn btn-secondary" style="flex: 1;">
+                            ↻
+                        </a>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        {# Table des Commandes #}
+        <div class="table-container">
+            <div class="table-header">
+                <h3 class="table-title">Liste des commandes ({{ commandes|length }} résultats)</h3>
+                <button class="btn btn-primary">📥 Exporter CSV</button>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>#Commande</th>
+                        <th>Client</th>
+                        <th>Date & Heure</th>
+                        <th>Mode</th>
+                        <th>État</th>
+                        <th>Montant</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for commande in commandes %}
+                    <tr>
+                        <td><strong>#{{ commande.numeroCommande }}</strong></td>
+                        {# Remplacez l'ancien bloc client par celui-ci #}
+                        <td>
+                            <div class="fw-bold">
+                                {# On utilise la propriété 'nomClient' définie dans votre DTO #}
+                                {{ commande.nomClient|default('Client #' ~ commande.idClient) }}
+                            </div>
+                            <div style="font-size: 12px; color: #757575;">
+                                {# On affiche l'ID car le téléphone n'est pas encore dans votre DTO #}
+                                <i class="bi bi-person-badge"></i> ID: {{ commande.idClient }}
+                            </div>
+                        </td>
+                        <td>
+                            {{ commande.dateCommande|date('d/m/Y') }}<br>
+                            <span style="font-size: 12px; color: #757575;">{{ commande.dateCommande|date('H:i') }}</span>
+                        </td>
+                        <td>
+                            {% if commande.modeConsommation == 'livraison' %}
+                                🚗 Livraison
+                            {% elseif commande.modeConsommation == 'sur_place' %}
+                                🏠 Sur place
+                            {% else %}
+                                🎒 {{ commande.modeConsommation|capitalize }}
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% set etatStyles = {
+                                'en_attente': 'status-pending',
+                                'en_cours': 'status-progress',
+                                'prete': 'status-ready',
+                                'terminee': 'status-completed',
+                                'annulee': 'status-cancelled'
+                            } %}
+                            <span class="status-badge {{ etatStyles[commande.etat] ?? 'status-pending' }}">
+                                {{ commande.etat|replace({'_': ' '})|capitalize }}
+                            </span>
+                        </td>
+                        <td><strong>{{ commande.montantTotal|number_format(0, ',', ' ') }} FCFA</strong></td>
+                        <td>
+                            <div style="display: flex; gap: 5px;">
+                                <a href="{{ path('commande_show', {id: commande.idCommande}) }}" class="btn btn-sm btn-secondary" title="Détails">
+                                    👁️
+                                </a>
+                                {% if commande.etat not in ['terminee', 'annulee'] %}
+                                <form method="post" action="{{ path('commande_annuler', {id: commande.idCommande}) }}" class="d-inline">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('annuler' ~ commande.idCommande) }}">
+                                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Annuler la commande {{ commande.numeroCommande }} ?')" title="Annuler">
+                                        ✕
+                                    </button>
+                                </form>
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="7" style="padding: 60px; text-align: center; color: #757575;">
+                            <div style="font-size: 48px; margin-bottom: 15px;">📭</div>
+                            <p style="font-size: 16px;">Aucune commande ne correspond à vos critères.</p>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            
+            {% if totalPages > 1 %}
+            <div style="padding: 20px; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #e0e0e0;">
+                <div style="color: #757575;">
+                    Affichage de 1 à {{ commandes|length }} sur {{ totalPages * 10 }} résultats
+                </div>
+                <div style="display: flex; gap: 5px;">
+                    {% if currentPage > 1 %}
+                        <a href="{{ path('commande_index', app.request.query.all|merge({page: currentPage - 1})) }}" class="btn btn-sm btn-secondary">‹ Précédent</a>
+                    {% else %}
+                        <button class="btn btn-sm btn-secondary" disabled>‹ Précédent</button>
+                    {% endif %}
+                    
+                    {% for page in 1..min(totalPages, 5) %}
+                        {% if page == currentPage %}
+                            <button class="btn btn-sm btn-primary">{{ page }}</button>
+                        {% else %}
+                            <a href="{{ path('commande_index', app.request.query.all|merge({page: page})) }}" class="btn btn-sm btn-secondary">{{ page }}</a>
+                        {% endif %}
+                    {% endfor %}
+                    
+                    {% if currentPage < totalPages %}
+                        <a href="{{ path('commande_index', app.request.query.all|merge({page: currentPage + 1})) }}" class="btn btn-sm btn-secondary">Suivant ›</a>
+                    {% else %}
+                        <button class="btn btn-sm btn-secondary" disabled>Suivant ›</button>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+
+        <div style="height: 50px;"></div>
+    </div>
+</div>
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('css/listeCommande.css') }}">
+{% endblock %}
+
+{% endblock %}

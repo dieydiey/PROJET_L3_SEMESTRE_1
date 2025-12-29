@@ -1,0 +1,184 @@
+        :root {
+            --bb-red: #e63946;
+            --bb-dark: #1d3557;
+            --bb-yellow: #ffb703;
+            --bb-bg: #f8fafc;
+            --sidebar-width: 200px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bb-bg);
+            color: #334155;
+            min-height: 100vh;
+            display: flex;
+            overflow: hidden;
+        }
+        
+        /* Sidebar fixe à gauche */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: var(--sidebar-width);
+            background: black;
+            display: flex;
+            flex-direction: column;
+            padding: 2rem 0;
+            z-index: 1000;
+            box-shadow: 4px 0 15px rgba(0,0,0,0.1);
+        }
+
+        .sidebar-brand {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding: 0 1rem;
+        }
+
+        .sidebar-brand .logo {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 1rem;
+            background-color: var(--bb-red);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+        }
+
+        .sidebar-brand h1 {
+            color: white;
+            font-size: 1rem;
+            font-weight: 700;
+            margin: 0;
+            letter-spacing: 1px;
+        }
+
+        .sidebar-nav {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            padding: 0 1rem;
+        }
+
+        .sidebar-link {
+            display: block;
+            padding: 1rem 1.5rem;
+            background-color: var(--bb-red);
+            color: white;
+            text-decoration: none;
+            text-align: center;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+
+        .sidebar-link:hover {
+            background-color: #d62839;
+            color: white;
+            transform: translateX(5px);
+        }
+
+        .sidebar-link.active {
+            background-color: #c41e2a;
+            border-color: var(--bb-yellow);
+        }
+
+        .sidebar-link.logout {
+            margin-top: 5%;
+            background-color: #4a4a4a;
+        }
+
+        .sidebar-link.logout:hover {
+            background-color: #666;
+        }
+
+        /* Zone principale scrollable */
+        .main-wrapper {
+            margin-left: var(--sidebar-width);
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+                /* Ajustement spécial pour la page login (pas de marge) */
+        body.login-page { display: block; }
+        .login-page .main-wrapper { margin-left: 0; }
+
+        .main-header {
+            height: 70px;
+            z-index: 999;
+        }
+        .bg-danger-soft { background-color: #fee2e2; }
+
+        main {
+            flex: 1;
+            padding: 2rem;
+        }
+
+        footer {
+            background-color: white;
+            border-top: 1px solid rgba(0,0,0,0.05);
+            padding: 1.5rem 2rem;
+            margin-top: auto;
+        }
+
+        /* Styles globaux */
+        .btn-bb {
+            background-color: var(--bb-red);
+            color: white;
+            border-radius: 10px;
+            font-weight: 600;
+            padding: 0.6rem 1.5rem;
+            border: none;
+            transition: transform 0.2s;
+        }
+        
+        .btn-bb:hover {
+            background-color: #d62839;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .card {
+            border: 1px solid rgba(0,0,0,0.05);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+            border-radius: 16px;
+        }
+
+        /* Badges */
+        .badge-soft-danger { background: #fee2e2; color: #ef4444; }
+        .badge-soft-success { background: #dcfce7; color: #22c55e; }
+        .badge-soft-warning { background: #fef9c3; color: #ca8a04; }
+
+        /* Mobile responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 80px;
+            }
+            .sidebar-brand h1 {
+                font-size: 0.7rem;
+            }
+            .sidebar-link {
+                padding: 0.8rem;
+                font-size: 0.8rem;
+            }
+            .main-wrapper {
+                margin-left: 80px;
+            }
+        }
+
+        
