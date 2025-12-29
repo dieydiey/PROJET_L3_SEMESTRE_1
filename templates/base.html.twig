@@ -1,17 +1,86 @@
+{# templates/base.html.twig #}
 <!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="UTF-8">
-        <title>{% block title %}Welcome!{% endblock %}</title>
-        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text><text y=%221.3em%22 x=%220.2em%22 font-size=%2276%22 fill=%22%23fff%22>sf</text></svg>">
-        {% block stylesheets %}
-        {% endblock %}
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Brasil Burger - Admin{% endblock %}</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    
+        <link rel="stylesheet" href="{{ asset('css/style.css') }}">
+    
+   
 
-        {% block javascripts %}
-            {% block importmap %}{{ importmap('app') }}{% endblock %}
-        {% endblock %}
-    </head>
-    <body>
-        {% block body %}{% endblock %}
-    </body>
+    
+</head>
+
+<body>
+    {% if app.request.get('_route') != 'app_login' %}
+
+        <!-- Sidebar fixe à gauche -->
+        <aside class="sidebar">
+            <div class="sidebar-brand">
+                <div class="logo">🍔</div>
+                <h1>BRASIL<br>BURGER</h1>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <a href="{{ path('statistique_index') }}" class="sidebar-link {{ app.request.get('_route') == 'statistique_index' ? 'active' : '' }}">
+                    <i class="bi bi-grid-1x2-fill"></i>
+                    <span>Accueil</span>
+                </a>
+                <a href="{{ path('commande_index') }}" class="sidebar-link {{ app.request.get('_route') == 'commande_index' ? 'active' : '' }}">
+                    <i class="bi bi-cart-fill"></i>
+                    <span>Commandes</span>
+                </a>
+                <a href="{{ path('livraison_index') }}" class="sidebar-link {{ app.request.get('_route') == 'livraison_index' ? 'active' : '' }}">
+                    <i class="bi bi-truck-fill"></i>
+                    <span>Livraisons</span>
+                </a>
+                <a href="{{ path('app_logout') }}" class="sidebar-link logout">
+                    <i class="bi bi-box-arrow-left me-2"></i> Log Out
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Zone principale scrollable -->
+        <div class="main-wrapper">
+            <header class="main-header d-flex justify-content-between align-items-center bg-white shadow-sm px-4 py-3 sticky-top">
+                <h2 class="h4 mb-0 fw-bold text-dark">
+                    {% block page_title %}Tableau de bord{% endblock %}
+                </h2>
+                
+                <div class="d-flex align-items-center gap-3">
+                    <div class="text-end d-none d-md-block">
+                        <p class="mb-0 fw-bold small text-dark" style="font-size: 12px;">
+                            {{ app.user ? app.user.prenom|capitalize ~ ' ' ~ app.user.nom|upper : 'Administrateur' }}
+                        </p>
+                        <small class="text-muted" style="font-size: 10px;">Gestionnaire</small>
+                    </div>
+                    <a href="{{ path('gestionnaire_profil') }}" class="avatar-box text-decoration-none">
+                        <i class="bi bi-person-fill"></i>
+                    </a>
+                </div>
+            </header>
+    {% endif %}
+        <main>
+            {% block body %}{% endblock %}
+        </main>
+
+        {% if app.request.get('_route') != 'app_login' %}
+            <footer class="bg-white py-3 px-4 border-top">
+                <div class="d-flex justify-content-between align-items-center small text-muted">
+                    <div>&copy; {{ "now"|date("Y") }} Brasil Burger</div>
+                    <div class="d-none d-sm-block">ISM L3 • Dakar</div>
+                </div>
+            </footer>
+        {% endif %}
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    {% block javascripts %}{% endblock %}
+</body>
 </html>
