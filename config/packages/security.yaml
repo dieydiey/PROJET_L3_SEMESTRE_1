@@ -16,7 +16,6 @@ security:
             lazy: true
             provider: app_user_provider
 
-            enable_csrf: false
             
             custom_authenticator: App\Security\AppAuthenticator
             
