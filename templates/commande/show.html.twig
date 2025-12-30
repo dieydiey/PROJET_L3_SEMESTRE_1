@@ -1,0 +1,182 @@
+{% extends 'base.html.twig' %}
+
+{% block page_title %}
+    <i class="bi bi-receipt text-danger me-2"></i>Détails Commande #{{ commande.numeroCommande }}
+{% endblock %}
+
+{% block body %}
+
+
+<div class="container-fluid py-3">
+
+    {# 1. BARRE D'ACTIONS (EN HAUT) #}
+    <div class="card mb-4 p-2">
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+            <div class="d-flex align-items-center gap-3">
+                <a href="{{ path('commande_index') }}" class="btn btn-outline-secondary btn-sm rounded-pill px-3">
+                    <i class="bi bi-arrow-left"></i> Retour
+                </a>
+                <span class="badge rounded-pill bg-danger-soft px-3 py-2">
+                    {{ commande.etat|replace({'_':' '})|upper }}
+                </span>
+            </div>
+
+            <div class="d-flex gap-2">
+                {% if commande.etat not in ['terminee', 'annulee'] %}
+                    <form method="post" action="{{ path('commande_changer_etat', {id: commande.id}) }}">
+                        <input type="hidden" name="_token" value="{{ csrf_token('etat' ~ commande.id) }}">
+                        <input type="hidden" name="etat" value="prete">
+                        <button class="btn btn-success btn-sm px-4 rounded-pill fw-bold">✓ Valider la commande</button>
+                    </form>
+
+                    <form method="post" action="{{ path('commande_annuler', {id: commande.id}) }}">
+                        <input type="hidden" name="_token" value="{{ csrf_token('annuler' ~ commande.id) }}">
+                        <button class="btn btn-outline-danger btn-sm px-4 rounded-pill fw-bold" 
+                                onclick="return confirm('Voulez-vous vraiment annuler cette commande ?')">
+                            ✕ Annuler
+                        </button>
+                    </form>
+                {% else %}
+                    <div class="alert alert-light m-0 py-1 px-3 border-0 small fw-bold text-uppercase">
+                        Dossier clôturé ({{ commande.etat }})
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        {# 2. INFOS CLIENT ET GÉNÉRALES (À GAUCHE) #}
+        <div class="col-lg-4">
+            <div class="card p-4 mb-4 h-100">
+                <h6 class="fw-bold mb-4">Informations Client</h6>
+                
+                <div class="text-center mb-4">
+                    <div class="avatar-circle">{{ commande.nomClient|first|upper }}</div>
+                    <div class="fw-bold fs-5">{{ commande.nomClient }}</div>
+                    <span class="badge bg-light text-muted border">Client Brasil Burger</span>
+                </div>
+
+                <hr class="opacity-25">
+
+                <div class="mt-4">
+                    <div class="mb-3">
+                        <label class="text-muted small d-block mb-1">DATE DE COMMANDE</label>
+                        <span class="fw-bold">{{ commande.dateCommande|date('d/m/Y à H:i') }}</span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="text-muted small d-block mb-1">MODE DE CONSOMMATION</label>
+                        <span class="fw-bold">
+                            {{ commande.modeConsommation == 'livraison' ? '🚗 Livraison' : '🛍️ Sur place' }}
+                        </span>
+                    </div>
+
+                    <div class="p-3 bg-light rounded-4 text-center mt-4">
+                        <label class="text-muted small d-block mb-1">TOTAL À PAYER</label>
+                        <div class="h3 fw-bold text-danger mb-0">
+                            {{ commande.montantTotal|number_format(0,' ',' ') }} FCFA
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {# 3. PRODUITS COMMANDÉS (À DROITE) #}
+        <div class="col-lg-8">
+            <div class="card h-100 d-flex flex-column">
+                <div class="card-header bg-white border-0 py-3">
+                    <h6 class="fw-bold mb-0">Articles dans cette commande</h6>
+                </div>
+
+                <div class="table-responsive flex-grow-1">
+                    <table class="table align-middle mb-0">
+                        <thead>
+                            <tr>
+                                <th class="ps-4">Image</th>
+                                <th>Produit</th>
+                                <th class="text-center">Qté</th>
+                                <th class="text-end pe-4">Sous-total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for ligne in commande.lignes %}
+                                {# On vérifie si c'est un complément pour adapter le style #}
+                                <tr class="{{ ligne.idComplement ? 'bg-light bg-opacity-10' : '' }}">
+                                    <td class="ps-4">
+                                        <img src="{{ ligne.image }}" alt="" 
+                                            class="product-img border shadow-sm {{ ligne.idComplement ? 'ms-3' : '' }}"
+                                            style="{{ ligne.idComplement ? 'width: 45px; height: 45px;' : '' }}">
+                                    </td>
+                                    <td>
+                                        <div class="{{ ligne.idComplement ? 'text-muted' : 'fw-bold' }}">
+                                            {{ ligne.idComplement ? '↳ ' ~ ligne.nomProduit : ligne.nomProduit }}
+                                        </div>
+                                        
+                                        <div class="mt-1">
+                                            {% if ligne.idBurger %}
+                                                <span class="badge bg-danger-soft text-danger border border-danger rounded-pill px-2" style="font-size: 8px;">BURGER</span>
+                                            {% elseif ligne.idMenu %}
+                                                <span class="badge bg-success-soft text-success border border-success rounded-pill px-2" style="font-size: 8px;">MENU</span>
+                                            {% elseif ligne.idComplement %}
+                                                <span class="badge bg-info-soft text-info border border-info rounded-pill px-2" style="font-size: 8px;">ACCOMPAGNEMENT</span>
+                                            {% endif %}
+                                        </div>
+                                    </td>
+                                    <td class="text-center fw-bold">x{{ ligne.quantite }}</td>
+                                    <td class="text-end pe-4">
+                                        <div class="{{ ligne.idComplement ? 'text-muted small' : 'fw-bold text-dark' }}">
+                                            {{ ligne.sousTotal|number_format(0,' ',' ') }} F
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                {# PAGINATION DES PRODUITS #}
+                <div class="card-footer bg-white border-top-0 py-3">
+                    {% if totalPages > 1 %}
+                        <nav aria-label="Pagination produits">
+                            <ul class="pagination pagination-sm justify-content-end mb-0">
+                                <li class="page-item {{ currentPage == 1 ? 'disabled' : '' }}">
+                                    <a class="page-link border-0 bg-light rounded-circle me-1" 
+                                       href="{{ currentPage > 1 ? path(app.request.attributes.get('_route'), app.request.query.all|merge({id: commande.id, page: currentPage - 1})) : '#' }}">
+                                        <i class="bi bi-chevron-left"></i>
+                                    </a>
+                                </li>
+
+                                {% for i in 1..totalPages %}
+                                    {% if i >= currentPage - 1 and i <= currentPage + 1 %}
+                                        <li class="page-item {{ i == currentPage ? 'active' : '' }}">
+                                            <a class="page-link border-0 rounded-3 mx-1 {{ i == currentPage ? 'bg-danger text-white' : 'text-dark bg-light' }}" 
+                                               href="{{ path(app.request.attributes.get('_route'), app.request.query.all|merge({id: commande.id, page: i})) }}">
+                                                {{ i }}
+                                            </a>
+                                        </li>
+                                    {% endif %}
+                                {% endfor %}
+
+                                <li class="page-item {{ currentPage == totalPages ? 'disabled' : '' }}">
+                                    <a class="page-link border-0 bg-light rounded-circle ms-1" 
+                                       href="{{ currentPage < totalPages ? path(app.request.attributes.get('_route'), app.request.query.all|merge({id: commande.id, page: currentPage + 1})) : '#' }}">
+                                        <i class="bi bi-chevron-right"></i>
+                                    </a>
+                                </li>
+                            </ul>
+                        </nav>
+                        <div class="text-end mt-1">
+                            <small class="text-muted" style="font-size: 10px;">Page {{ currentPage }} / {{ totalPages }}</small>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('css/detail.css') }}">
+{% endblock %}
+{% endblock %}
