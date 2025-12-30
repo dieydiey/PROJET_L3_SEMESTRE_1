@@ -1,0 +1,22 @@
+    :root {
+        --primary-soft: #eef2ff;
+        --success-soft: #ecfdf5;
+        --warning-soft: #fffbeb;
+        --danger-soft: #fef2f2;
+    }
+    .bg-primary-soft { background-color: var(--primary-soft); }
+    .bg-success-soft { background-color: var(--success-soft); }
+    .bg-warning-soft { background-color: var(--warning-soft); }
+    .bg-danger-soft { background-color: var(--danger-soft); }
+    
+    .card { transition: transform 0.2s; }
+    .rounded-4 { border-radius: 1.25rem !important; }
+    
+    .rank-badge {
+        width: 32px; height: 32px;
+        display: flex; align-items: center; justify-content: center;
+        border-radius: 50%; background: #f8f9fa;
+        font-weight: bold; font-size: 0.8rem;
+    }
+    .rank-badge.gold { background: #ffdf00; color: #856404; }
+    .rank-badge.silver { background: #e9ecef; color: #495057; }
