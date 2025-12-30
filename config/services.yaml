@@ -6,6 +6,7 @@
 parameters:
     ITEMS_PER_PAGE: 3
     locale: 'fr'
+    session_save_path: '%kernel.project_dir%/var/sessions/%kernel.environment%'
 
 services:
     # default configuration for services in *this* file
