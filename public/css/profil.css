@@ -1,0 +1,22 @@
+
+    .bg-danger-soft { background-color: #fee2e2; }
+    .badge-soft-success { background-color: #dcfce7; color: #166534; }
+    
+    .nav-tabs .nav-link {
+        padding: 1rem 1.5rem;
+        position: relative;
+        transition: 0.3s;
+    }
+    .nav-tabs .nav-link.active::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 3px;
+        background-color: var(--bb-red);
+    }
+    .form-control:focus {
+        border-color: var(--bb-red);
+        box-shadow: 0 0 0 0.25rem rgba(230, 57, 70, 0.1);
+    }
