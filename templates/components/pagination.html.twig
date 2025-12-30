@@ -1,0 +1,61 @@
+{% if totalPages > 1 %}
+<nav aria-label="Pagination" class="mt-4">
+    <ul class="pagination justify-content-center">
+        {# Bouton Précédent #}
+        <li class="page-item {{ currentPage == 1 ? 'disabled' : '' }}">
+            <a class="page-link" href="{{ currentPage > 1 ? path(app.request.attributes.get('_route'), app.request.query.all|merge({page: currentPage - 1})) : '#' }}" aria-label="Précédent">
+                <span aria-hidden="true">&laquo;</span>
+            </a>
+        </li>
+
+        {# Première page #}
+        {% if currentPage > 3 %}
+            <li class="page-item">
+                <a class="page-link" href="{{ path(app.request.attributes.get('_route'), app.request.query.all|merge({page: 1})) }}">1</a>
+            </li>
+            {% if currentPage > 4 %}
+                <li class="page-item disabled">
+                    <span class="page-link">...</span>
+                </li>
+            {% endif %}
+        {% endif %}
+
+        {# Pages autour de la page actuelle #}
+        {% for i in 1..totalPages %}
+            {% if i >= currentPage - 2 and i <= currentPage + 2 %}
+                <li class="page-item {{ i == currentPage ? 'active' : '' }}">
+                    <a class="page-link" href="{{ path(app.request.attributes.get('_route'), app.request.query.all|merge({page: i})) }}">
+                        {{ i }}
+                        {% if i == currentPage %}
+                            <span class="sr-only">(actuelle)</span>
+                        {% endif %}
+                    </a>
+                </li>
+            {% endif %}
+        {% endfor %}
+
+        {# Dernière page #}
+        {% if currentPage < totalPages - 2 %}
+            {% if currentPage < totalPages - 3 %}
+                <li class="page-item disabled">
+                    <span class="page-link">...</span>
+                </li>
+            {% endif %}
+            <li class="page-item">
+                <a class="page-link" href="{{ path(app.request.attributes.get('_route'), app.request.query.all|merge({page: totalPages})) }}">{{ totalPages }}</a>
+            </li>
+        {% endif %}
+
+        {# Bouton Suivant #}
+        <li class="page-item {{ currentPage == totalPages ? 'disabled' : '' }}">
+            <a class="page-link" href="{{ currentPage < totalPages ? path(app.request.attributes.get('_route'), app.request.query.all|merge({page: currentPage + 1})) : '#' }}" aria-label="Suivant">
+                <span aria-hidden="true">&raquo;</span>
+            </a>
+        </li>
+    </ul>
+</nav>
+
+<div class="text-center text-muted mt-2">
+    <small>Page {{ currentPage }} sur {{ totalPages }}</small>
+</div>
+{% endif %}
