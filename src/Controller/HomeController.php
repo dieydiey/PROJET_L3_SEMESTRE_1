@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller;
+/*namespace App\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -16,4 +16,4 @@ final class HomeController extends AbstractController
 
     return new Response("Bravo ! Le site est en ligne et connecté à la base : " . $dbName);
 }
-}
+}*/
