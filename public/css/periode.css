@@ -1,0 +1,18 @@
+    .bg-primary-soft { background-color: #f0f7ff; }
+    .bg-success-soft { background-color: #f0fdf4; }
+    .rounded-4 { border-radius: 1.25rem !important; }
+    .icon-circle {
+        width: 50px; height: 50px;
+        display: flex; align-items: center; justify-content: center;
+        border-radius: 12px; font-size: 1.5rem;
+    }
+    .empty-state-icon {
+        width: 120px; height: 120px;
+        background: #f8f9fa;
+        display: flex; align-items: center; justify-content: center;
+        border-radius: 50%;
+        font-size: 3rem;
+    }
+    .form-control:focus { border-color: #dc3545; box-shadow: none; }
+    .btn-danger { background-color: #e63946; border: none; }
+    .btn-danger:hover { background-color: #d62839; }

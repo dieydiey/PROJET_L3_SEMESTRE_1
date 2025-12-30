@@ -1,0 +1,131 @@
+{% extends 'base.html.twig' %}
+
+{% block page_title %}Analyse par periode{% endblock %}
+
+
+{% block body %}
+<div class="container-fluid py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h3 fw-bold mb-0 text-dark">Analyse Temporelle</h1>
+            <p class="text-muted small mb-0">Comparez vos performances sur des dates précises</p>
+        </div>
+        <a href="{{ path('statistique_index') }}" class="btn btn-outline-dark rounded-pill px-4">
+            <i class="bi bi-arrow-left me-2"></i> Retour au Dashboard
+        </a>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm rounded-4 sticky-top" style="top: 20px;">
+                <div class="card-body p-4">
+                    <h5 class="fw-bold mb-4">Configurations</h5>
+                    
+                    <form method="post" action="{{ path('statistique_periode') }}">
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold text-uppercase text-muted">Date de début</label>
+                            <input type="date" class="form-control form-control-lg border-2 shadow-none rounded-3" id="dateDebut" name="dateDebut" required>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label small fw-bold text-uppercase text-muted">Date de fin</label>
+                            <input type="date" class="form-control form-control-lg border-2 shadow-none rounded-3" id="dateFin" name="dateFin" required>
+                        </div>
+
+                        <button type="submit" class="btn btn-danger w-100 btn-lg rounded-3 shadow-sm mb-4">
+                            <i class="bi bi- lightning-charge-fill me-2"></i> Analyser
+                        </button>
+                    </form>
+
+                    <div class="text-center mb-3">
+                        <span class="small text-muted bg-white px-2 position-relative" style="z-index:1">Raccourcis rapides</span>
+                        <hr class="mt-n2" style="margin-top: -10px;">
+                    </div>
+
+                    <div class="row g-2">
+                        <div class="col-6">
+                            <button class="btn btn-light w-100 btn-sm py-2 rounded-3 border" onclick="setThisWeek()">Cette semaine</button>
+                        </div>
+                        <div class="col-6">
+                            <button class="btn btn-light w-100 btn-sm py-2 rounded-3 border" onclick="setThisMonth()">Ce mois-ci</button>
+                        </div>
+                        <div class="col-12">
+                            <button class="btn btn-light w-100 btn-sm py-2 rounded-3 border" onclick="setLastMonth()">Le mois dernier</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-8">
+            {% if stats %}
+                <div class="card border-0 shadow-sm rounded-4 overflow-hidden mb-4">
+                    <div class="card-header bg-dark py-3 px-4">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="text-white fw-bold">Période du {{ stats.periode.debut }} au {{ stats.periode.fin }}</span>
+                            <span class="badge bg-danger rounded-pill">Données compilées</span>
+                        </div>
+                    </div>
+                    <div class="card-body p-4">
+                        <div class="row g-4 mb-4">
+                            <div class="col-md-6">
+                                <div class="p-4 rounded-4 bg-primary-soft border border-primary-subtle text-center">
+                                    <div class="icon-circle bg-primary text-white mx-auto mb-3">
+                                        <i class="bi bi-cart-check"></i>
+                                    </div>
+                                    <h6 class="text-primary text-uppercase small fw-bold">Commandes Totales</h6>
+                                    <p class="display-5 fw-bold mb-0 text-dark">{{ stats.commandesTotal }}</p>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="p-4 rounded-4 bg-success-soft border border-success-subtle text-center">
+                                    <div class="icon-circle bg-success text-white mx-auto mb-3">
+                                        <i class="bi bi-currency-dollar"></i>
+                                    </div>
+                                    <h6 class="text-success text-uppercase small fw-bold">Recettes Brutes</h6>
+                                    <p class="display-5 fw-bold mb-0 text-dark">{{ stats.recettes|number_format(0, ',', ' ') }}</p>
+                                    <span class="small text-muted">FCFA</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-light rounded-4 p-4 d-flex justify-content-around align-items-center">
+                            <div class="text-center">
+                                <span class="text-muted small d-block">Panier Moyen</span>
+                                <span class="h4 fw-bold text-dark">
+                                    {% if stats.commandesTotal > 0 %}
+                                        {{ (stats.recettes / stats.commandesTotal)|number_format(0, ',', ' ') }} 
+                                    {% else %} 0 {% endif %} 
+                                    <small class="fs-6 text-muted">FCFA</small>
+                                </span>
+                            </div>
+                            <div class="vr text-muted opacity-25"></div>
+                            <div class="text-center">
+                                <span class="text-muted small d-block">Performance</span>
+                                <span class="badge bg-success-subtle text-success border border-success-subtle px-3 py-2">
+                                    <i class="bi bi-graph-up-arrow me-1"></i> Stable
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% else %}
+                <div class="card border-0 shadow-sm rounded-4 text-center p-5">
+                    <div class="py-5">
+                        <div class="empty-state-icon mx-auto mb-4">
+                            <i class="bi bi-calendar2-range text-muted opacity-50"></i>
+                        </div>
+                        <h4 class="fw-bold text-dark">Aucune période sélectionnée</h4>
+                        <p class="text-muted px-5">Utilisez le panneau de gauche pour définir un intervalle de dates et lancer le calcul des données.</p>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('css/periode.css') }}">
+{% endblock %}
+
+{% endblock %}
