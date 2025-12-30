@@ -1,0 +1,15 @@
+
+    .bg-light-danger { background-color: #fff5f5; }
+    .rounded-4 { border-radius: 1rem !important; }
+    .livraison-card {
+        transition: transform 0.2s, box-shadow 0.2s;
+        border: 1px solid rgba(0,0,0,0.05) !important;
+    }
+    .livraison-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.08) !important;
+    }
+    .btn-danger { background-color: #e63946; border-color: #e63946; }
+    .btn-outline-danger { color: #e63946; border-color: #e63946; }
+    .btn-outline-danger:hover { background-color: #e63946; color: white; }
+    .text-danger { color: #e63946 !important; }
