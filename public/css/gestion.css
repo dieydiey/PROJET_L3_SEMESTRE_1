@@ -1,0 +1,7 @@
+
+    .cursor-pointer { cursor: pointer; }
+    .card { transition: all 0.2s; }
+    .bg-danger { background-color: #e63946 !important; }
+    .text-danger { color: #e63946 !important; }
+    .btn-danger { background-color: #e63946; border: none; }
+    .rounded-4 { border-radius: 1rem !important; }

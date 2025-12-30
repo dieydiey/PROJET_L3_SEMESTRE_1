@@ -1,0 +1,139 @@
+{% extends 'base.html.twig' %}
+
+{% block page_title %}
+    <span class="d-inline-flex align-items-center justify-content-center rounded-circle me-2" style="width: 35px; height: 35px; background-color: #fef2f2;">
+        <i class="bi bi-box-seam text-danger fs-5"></i>
+    </span>
+    Gestion des Livraisons
+{% endblock %}
+
+{% block body %}
+<div class="container-fluid bg-light p-4">
+    <div class="row">
+        <div class="col-md-9">
+            
+
+            <div class="card border-0 shadow-sm rounded-4 mb-4">
+                <div class="card-body p-4">
+                    <h5 class="fw-bold mb-4">Livraisons en attente par zone</h5>
+                    {# En-tête des zones #}
+                <div class="d-flex gap-3 overflow-auto pb-2">
+                    {% for zone in zones %}
+                        {% set totalCommandes = zone.commandes|length %}
+                        
+                        <a href="{{ path('livraison_par_zone', {zone: zone.idZone}) }}" class="text-decoration-none">
+                            <div class="card border-0 text-center p-3 {% if currentZone == zone.idZone %}bg-danger text-white{% else %}bg-white border text-dark{% endif %}" 
+                                style="min-width: 150px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
+                                
+                                <h6 class="fw-bold mb-1">{{ zone.nom }}</h6>
+                                <small class="{% if currentZone == zone.idZone %}text-white-50{% else %}text-muted{% endif %}">
+                                    {{ totalCommandes }} commande{{ totalCommandes > 1 ? 's' : '' }}
+                                </small>
+                            </div>
+                        </a>
+                    {% endfor %}
+                </div>
+                </div>
+            </div>
+
+            <div class="card border-0 shadow-sm rounded-4">
+                <div class="card-body p-4">
+                    <h5 class="fw-bold mb-4">Zone: {{ activeZoneName }} ({{ livraisons|length }} commandes)</h5>
+                    
+                    <form id="affectationForm" method="post" action="{{ path('livraison_affecter_groupe') }}">
+                        <div class="row g-3">
+                            {% for livraison in livraisons %}
+                                <div class="col-12">
+                                    <div class="card border border-light shadow-sm p-3 rounded-4">
+                                        <div class="d-flex align-items-start gap-3">
+                                            <input type="checkbox" name="livraisons[]" value="{{ livraison.idLivraison }}" class="form-check-input mt-1 border-success checkbox-livraison">
+                                            <div class="flex-grow-1">
+                                                <div class="fw-bold text-dark">#{{ livraison.commande.numeroCommande }}</div>
+                                                <div class="text-muted small">{{ livraison.adresseLivraison }}</div>
+                                                <div class="text-muted small">Client: {{ livraison.commande.client.prenom }} {{ livraison.commande.client.nom }} {{ livraison.commande.client.telephone }}</div>
+                                                <div class="text-danger fw-bold mt-1">{{ livraison.commande.montantTotal|number_format(0, '.', ' ') }} FCFA</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                        <input type="hidden" name="idLivreur" id="selectedLivreurInput">
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm rounded-4 h-100">
+                <div class="card-body p-4 text-center">
+                    <h5 class="fw-bold mb-4">Livreurs disponibles</h5>
+                    
+                    <div class="d-flex flex-column gap-3 mb-4">
+                        {% for livreur in livreurs %}
+                            <div class="livreur-card card border p-3 rounded-4 cursor-pointer" onclick="selectLivreur({{ livreur.idLivreur }}, '{{ livreur.prenom }} {{ livreur.nom }}', this)">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div class="text-start">
+                                        <div class="fw-bold text-danger">{{ livreur.prenom }} {{ livreur.nom }}</div>
+                                        <div class="text-muted small">{{ livreur.telephone }}</div>
+                                    </div>
+                                    <div class="check-container">
+                                        <i class="bi bi-square fs-4 text-muted"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+
+                    <button type="button" onclick="submitAffectation()" id="btnAffecter" class="btn btn-danger w-100 p-3 rounded-4 fw-bold" disabled>
+                        Affecter <span id="countSelected">0</span> commande(s)
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let selectedLivreurId = null;
+
+    function selectLivreur(id, name, element) {
+        selectedLivreurId = id;
+        document.getElementById('selectedLivreurInput').value = id;
+        
+        // Reset styles
+        document.querySelectorAll('.livreur-card').forEach(c => {
+            c.classList.remove('border-danger');
+            c.querySelector('.check-container').innerHTML = '<i class="bi bi-square fs-4 text-muted"></i>';
+        });
+        
+        // Active style
+        element.classList.add('border-danger');
+        element.querySelector('.check-container').innerHTML = '<i class="bi bi-check-square-fill fs-4 text-success"></i>';
+        
+        updateButton();
+    }
+
+    // Mise à jour du compteur de commandes cochées
+    document.querySelectorAll('.checkbox-livraison').forEach(cb => {
+        cb.addEventListener('change', updateButton);
+    });
+
+    function updateButton() {
+        const checkedCount = document.querySelectorAll('.checkbox-livraison:checked').length;
+        document.getElementById('countSelected').innerText = checkedCount;
+        const btn = document.getElementById('btnAffecter');
+        btn.disabled = !(checkedCount > 0 && selectedLivreurId !== null);
+    }
+
+    function submitAffectation() {
+        if(confirm("Confirmer l'affectation des commandes au livreur ?")) {
+            document.getElementById('affectationForm').submit();
+        }
+    }
+</script>
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('css/detail.css') }}">
+{% endblock %}
+
+{% endblock %}
