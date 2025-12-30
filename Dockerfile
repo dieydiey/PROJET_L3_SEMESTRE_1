@@ -28,23 +28,23 @@ WORKDIR /var/www/html
 # Copier les fichiers du projet
 COPY . .
 
-# --- FIX POUR L'ERREUR 255 ---
 # Définir les variables d'environnement pour le build
 ENV APP_ENV=prod
 ENV APP_DEBUG=0
+# DATABASE_URL fictive pour le build (ne sera pas utilisée au runtime)
+ENV DATABASE_URL="postgresql://user:pass@localhost:5432/db?serverVersion=16&charset=utf8"
 
-# 1. Installer sans scripts pour ne pas charger DebugBundle
+# 1. Installer sans scripts
 RUN composer install --no-dev --optimize-autoloader --no-scripts
 
 # 2. Créer les dossiers nécessaires
 RUN mkdir -p var/cache var/log
 
-# 3. Générer le cache de production manuellement
-RUN php bin/console cache:clear --env=prod
+# 3. Générer le cache avec les flags pour éviter les connexions
+RUN php bin/console cache:clear --env=prod --no-warmup --no-optional-warmers
 
 # 4. Donner les droits à Apache
 RUN chown -R www-data:www-data var/
-# -----------------------------
 
 # Exposer le port 80
 EXPOSE 80
