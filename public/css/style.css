@@ -46,7 +46,7 @@
             width: 80px;
             height: 80px;
             margin: 0 auto 1rem;
-            background-color: var(--bb-red);
+            background-color: white;
             border-radius: 50%;
             display: flex;
             align-items: center;

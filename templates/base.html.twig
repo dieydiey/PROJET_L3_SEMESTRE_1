@@ -24,11 +24,12 @@
         <aside class="sidebar">
             <div class="sidebar-brand">
                 <div class="logo">
-                    <i class="bi bi-egg-fried" style="color: var(--bb-red); font-size: 1.8rem;"></i>
+                    {# Utilisation d'une icône Bootstrap rouge #}
+                    <i class="bi bi-egg-fried" style="color: #e63946; font-size: 1.8rem;"></i>
                 </div>
                 <h1>BRASIL<br>BURGER</h1>
             </div>
-            
+                        
             <nav class="sidebar-nav">
                 <a href="{{ path('statistique_index') }}" class="sidebar-link {{ app.request.get('_route') == 'statistique_index' ? 'active' : '' }}">
                     <i class="bi bi-grid-1x2-fill"></i>
